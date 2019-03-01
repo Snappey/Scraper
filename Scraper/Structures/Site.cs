@@ -13,15 +13,17 @@ namespace Scraper.Structures
         public bool IncludeIndex;
         public bool ScrapeLinks;
         public bool ScrapeImages;
+        public PipelineOutput OutputType;
         #endregion
 
-        public Site(Uri uri, bool incidx = true, bool scplnks = false, bool scpimgs = true)
+        public Site(Uri uri, bool incidx = true, bool scplnks = false, bool scpimgs = true, PipelineOutput outputtype = PipelineOutput.Plaintext)
         {
             URL = uri;
 
             IncludeIndex = incidx;
+            ScrapeLinks = scplnks;
             ScrapeImages = scplnks;
-            ScrapeImages = scplnks;
+            OutputType = outputtype;
         }
 
         public PageLayout AddPage(string page)

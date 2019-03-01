@@ -6,7 +6,7 @@ namespace Scraper.Structures
 {
     public class PageLayout
     {
-        public List<string> Nodes = new List<string>();
+        public List<NodeRequest> Nodes = new List<NodeRequest>();
         public string Path;
         public Uri URL;
 
@@ -16,9 +16,9 @@ namespace Scraper.Structures
             Path = path;
         }
 
-        public void AddNode(string xpath)
+        public void AddNode(NodeRequest request)
         {
-            Nodes.Add(xpath);
+            Nodes.Add(request);
         }
     }
 }

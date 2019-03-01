@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Scraper.Structures
 {
-    public class RawPage
+    public struct NodeRequest
     {
-        public string Content;
-        public DateTime Time;
-        public Uri URL;
+        public string XPath;
+        public string Property;
     }
 }

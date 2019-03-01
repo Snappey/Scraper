@@ -11,19 +11,19 @@ namespace Crawler
         {
             Console.WriteLine("Hello World!");
 
-            Scraper.Scraper scraper = new Scraper.Scraper();
+            var scraper = new Scraper.Scraper();
 
             Site dotnetperls = new Site(new Uri("https://www.dotnetperls.com"));
-            var indexLayout = dotnetperls.AddPage("/");
-            var asyncLayout = dotnetperls.AddPage("async");
+            PageLayout indexLayout = dotnetperls.AddPage("");
+            PageLayout asyncLayout = dotnetperls.AddPage("async");
 
-            asyncLayout.AddNode("//*[@id=\"u\"]/div/p[3]/text()");
-
+            indexLayout.AddNode(new NodeRequest{Property = "Links", XPath = "//body//a"});
+            asyncLayout.AddNode(new NodeRequest{Property = "Title", XPath = "//body//a"});
 
             Console.WriteLine(dotnetperls.ToString());
             scraper.AddSite(dotnetperls);
 
-            scraper.Start();
+            scraper.Run();
 
             Console.ReadKey();
         }

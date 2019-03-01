@@ -9,17 +9,14 @@ using OpenQA.Selenium.Chrome;
 
 namespace Scraper
 {
-    class Downloader
+    internal class Downloader
     {
         private ChromeDriver chrome;
-        private ChromeOptions options;
 
         public Downloader()
         {
-
-            options = new ChromeOptions();
+            ChromeOptions options = new ChromeOptions();
             options.AddArgument("headless");
-            options.AddArgument("disable-logging");
 
             chrome = new ChromeDriver(@"C:\Users\Jon\Source\Repos\Scraper\Scraper\bin\Debug\netcoreapp2.0", options);
         }
@@ -34,7 +31,7 @@ namespace Scraper
             page.Time = DateTime.Now;
             page.URL = uri;
 
-            Console.WriteLine(uri.ToString() + " - Downloaded");
+            Console.WriteLine("| > " + uri + " - Downloaded");
             return page;
         }
     }

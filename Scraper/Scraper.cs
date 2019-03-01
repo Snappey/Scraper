@@ -1,6 +1,8 @@
 ﻿using Scraper.Structures;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using HtmlAgilityPack;
 
 namespace Scraper
 {
@@ -8,6 +10,7 @@ namespace Scraper
     {
         private Downloader downloadManager;
         private PageProcessor pageProcessor;
+        private Pipeline outputPipeline;
 
         private Queue<Site> sites = new Queue<Site>();
 
@@ -15,9 +18,10 @@ namespace Scraper
         {
             downloadManager = new Downloader();
             pageProcessor = new PageProcessor();
+            outputPipeline = new Pipeline();
         }
 
-        public void Start()
+        public void Run()
         {
             if (sites.Count == 0)
             {
@@ -26,6 +30,7 @@ namespace Scraper
             }
 
             Queue<RawPage> rawPages = new Queue<RawPage>();
+            List<NodeResult> results = new List<NodeResult>();
 
             while (sites.Count > 0)
             {
@@ -33,18 +38,22 @@ namespace Scraper
                 foreach(PageLayout page in site.Pages.Values)
                 {
                     RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path));
-                    rawPage.Site = site;
 
                     rawPages.Enqueue(rawPage);
                 }
 
-                while(rawPages.Count > 0)
+                Console.Write("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
+
+                while (rawPages.Count > 0)
                 {
                     RawPage rawPage = rawPages.Dequeue();
 
-                    pageProcessor.Next(rawPage, site);
+                    results = pageProcessor.Next(rawPage, site);
+
+                    outputPipeline.Output(results);
                 }
 
+                
             }
 
         }
