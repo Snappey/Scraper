@@ -17,8 +17,9 @@ namespace Scraper
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("headless");
+            options.AddArgument("--log-level=3");
 
-            chrome = new ChromeDriver(@"C:\Users\Jon\Source\Repos\Scraper\Scraper\bin\Debug\netcoreapp2.0", options);
+            chrome = new ChromeDriver(Environment.CurrentDirectory, options); // Chromedriver is copied across from the working directory to the output dir
         }
 
         public RawPage Next(Uri uri)
@@ -26,10 +27,12 @@ namespace Scraper
             chrome.Navigate().GoToUrl(uri.AbsoluteUri);
             string content = chrome.PageSource;
 
-            RawPage page = new RawPage();
-            page.Content = content;
-            page.Time = DateTime.Now;
-            page.URL = uri;
+            RawPage page = new RawPage
+            {
+                Content = content,
+                Time = DateTime.Now,
+                URL = uri
+            };
 
             Console.WriteLine("| > " + uri + " - Downloaded");
             return page;
