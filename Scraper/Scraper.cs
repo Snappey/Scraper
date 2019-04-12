@@ -42,7 +42,7 @@ namespace Scraper
                     rawPages.Enqueue(rawPage);
                 }
 
-                Console.Write("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
+                Console.WriteLine("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
 
                 while (rawPages.Count > 0)
                 {
@@ -50,12 +50,9 @@ namespace Scraper
 
                     results = pageProcessor.Next(rawPage, site);
 
-                    outputPipeline.Output(results);
-                }
-
-                
+                    outputPipeline.Output(results, site, rawPage.URL.PathAndQuery);
+                } 
             }
-
         }
 
         public void AddSite(Site site)
