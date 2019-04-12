@@ -16,28 +16,27 @@ namespace Scraper
             
         }
 
-        public void Output(List<NodeResult> outputNodes)
+        public void Output(List<NodeResult> outputNodes, Site site, string page)
         {
-            PipelineOutput outputType = outputNodes.First().Site.OutputType;
+            //PipelineOutput outputType = outputNodes.First().Site.OutputType;
 
-            switch (outputType)
+            switch (site.OutputType)
             {
                 case PipelineOutput.Plaintext:
-                    PlaintextHandler(outputNodes);
+                    PlaintextHandler(outputNodes, site, page);
                     break;
                 case PipelineOutput.Json:
-                    JsonHandler(outputNodes);
+                    JsonHandler(outputNodes, site, page);
                     break;
                 default:
                     throw new NotImplementedException("Handler has not been implemented");
             }
         }
 
-        private void PlaintextHandler(List<NodeResult> outputNodes)
+        private void PlaintextHandler(List<NodeResult> outputNodes, Site site, string page)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            Site site = outputNodes.First().Site;
-            stringBuilder.AppendLine("| > " + site.URL + " - {" + outputNodes.First().Nodes.First().XPath + "}");
+            stringBuilder.AppendLine("| > " + site.URL + " - { TODO IMPLEMENT XPATH }");
 
             foreach (NodeResult node in outputNodes)
             {
@@ -49,19 +48,22 @@ namespace Scraper
                 }
             }
 
-            WriteFile(site, outputNodes.First().Page.Replace('/','-'),stringBuilder.ToString());
+            WriteFile(site, page.Replace('/','-'), stringBuilder.ToString());
         }
 
-        private void JsonHandler(List<NodeResult> outputNodes)
+        private void JsonHandler(List<NodeResult> outputNodes, Site site, string page)
         {
 
         }
 
         private void WriteFile(Site site, string filename, string output)
         {
-            if (Directory.Exists(@"C:\Users\Jon\Source\Repos\Scraper\Scraper\bin\Debug\netcoreapp2.0\" + site.URL.Host) == false) { Directory.CreateDirectory(@"C:\Users\Jon\Source\Repos\Scraper\Scraper\bin\Debug\netcoreapp2.0\" + site.URL.Host);}
-
-            File.WriteAllText(@"C:\Users\Jon\Source\Repos\Scraper\Scraper\bin\Debug\netcoreapp2.0\" + site.URL.Host + "\\" + filename + ".txt", output);
+            string BasePath = Environment.CurrentDirectory; // File Structure: ExecDir/data/url/files (index is '-', '\' is also replaced by '-')
+            if (Directory.Exists(BasePath + "\\data") == false) {
+                Directory.CreateDirectory(BasePath + "\\data"); }
+            if (Directory.Exists(BasePath + "\\data\\" + site.URL.Host) == false) {
+                Directory.CreateDirectory(BasePath + "\\data\\" + site.URL.Host);}
+            File.WriteAllText($"{BasePath}\\data\\{site.URL.Host}\\{filename}.txt", output);
         }
     }
 
