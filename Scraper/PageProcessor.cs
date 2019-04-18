@@ -15,7 +15,7 @@ namespace Scraper
             HtmlDocument html = new HtmlDocument();
             html.LoadHtml(rawPage.Content);
 
-            List<NodeRequest> layouts = site.Pages[rawPage.URL.LocalPath.Remove(0,1)].Nodes;
+            List<NodeRequest> layouts = site.Pages[rawPage.URL.PathAndQuery.Remove(0,1)].Nodes;
             List<NodeResult> htmlNodes = new List<NodeResult>();
 
             Console.WriteLine("|> Processing, " + rawPage.URL);
