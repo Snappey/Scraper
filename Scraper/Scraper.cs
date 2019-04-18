@@ -12,7 +12,12 @@ namespace Scraper
         private PageProcessor pageProcessor;
         private Pipeline outputPipeline;
 
-        private Queue<Site> sites = new Queue<Site>();
+        private Queue<Site> sites = new Queue<Site>(); // TODO: Run should iterate through sites instead of a list of pages, store rawpages in the site structure rather than the scraper
+
+        private delegate void DownloadedHandler(object sender, EventArgs e);
+
+        public event EventHandler PageDownloaded = delegate { };
+        public event EventHandler PageProcessed = delegate { };
 
         public Scraper()
         {
@@ -38,6 +43,7 @@ namespace Scraper
                 foreach(PageLayout page in site.Pages.Values)
                 {
                     RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path));
+                    PageDownloaded.Invoke(rawPage, EventArgs.Empty);
 
                     rawPages.Enqueue(rawPage);
                 }
@@ -49,8 +55,9 @@ namespace Scraper
                     RawPage rawPage = rawPages.Dequeue();
 
                     results = pageProcessor.Next(rawPage, site);
+                    PageProcessed.Invoke(results, EventArgs.Empty);
 
-                    outputPipeline.Output(results, site, rawPage.URL.PathAndQuery);
+                    outputPipeline.Output(results, site, rawPage.URL.LocalPath);
                 } 
             }
         }
