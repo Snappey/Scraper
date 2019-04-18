@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Crawler.Interfaces;
+using Crawler.Structures;
 
 namespace Crawler.Sites
 {
@@ -15,7 +16,7 @@ namespace Crawler.Sites
 
         }
 
-        public void GetData()
+        public List<Hotel> GetData()
         {
             throw new NotImplementedException();
         }
