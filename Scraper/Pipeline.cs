@@ -28,6 +28,9 @@ namespace Scraper
                 case PipelineOutput.Json:
                     JsonHandler(outputNodes, site, page);
                     break;
+                case PipelineOutput.Object:
+                    ObjectHandler(outputNodes, site, page);
+                    break;
                 default:
                     throw new NotImplementedException("Handler has not been implemented");
             }
@@ -56,11 +59,16 @@ namespace Scraper
 
         }
 
+        private void ObjectHandler(List<NodeResult> outputNodes, Site site, string page)
+        {
+            // TODO: Return an object in a field that the user can access, possibly change the output function to return a value. User can cast the object to their desired type
+        }
+
         private void WriteFile(Site site, string filename, string output)
         {
             string BasePath = Environment.CurrentDirectory; // File Structure: ExecDir/data/url/files (index is '-', '\' is also replaced by '-')
             if (Directory.Exists(BasePath + "\\data") == false) {
-                Directory.CreateDirectory(BasePath + "\\data"); }
+                Directory.CreateDirectory(BasePath + "\\data");}
             if (Directory.Exists(BasePath + "\\data\\" + site.URL.Host) == false) {
                 Directory.CreateDirectory(BasePath + "\\data\\" + site.URL.Host);}
             File.WriteAllText($"{BasePath}\\data\\{site.URL.Host}\\{filename}.txt", output);
@@ -70,6 +78,7 @@ namespace Scraper
     public enum PipelineOutput
     {
         Plaintext,
-        Json
+        Json,
+        Object,
     }
 }
