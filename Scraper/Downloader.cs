@@ -19,7 +19,7 @@ namespace Scraper
         public Downloader()
         {
             ChromeOptions options = new ChromeOptions();
-            //options.AddArgument("headless");
+            options.AddArgument("headless");
             options.AddArgument("--log-level=3");
 
             chrome = new ChromeDriver(Environment.CurrentDirectory, options); // Chromedriver is copied across from the working directory to the output dir

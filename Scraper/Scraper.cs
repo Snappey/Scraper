@@ -12,7 +12,7 @@ namespace Scraper
         private PageProcessor pageProcessor;
         private Pipeline outputPipeline;
 
-        private Queue<Site> sites = new Queue<Site>(); // TODO: Run should iterate through sites instead of a list of pages, store rawpages in the site structure rather than the scraper
+        private List<Site> sites = new List<Site>(); // TODO: Run should iterate through sites instead of a list of pages, store rawpages in the site structure rather than the scraper
 
         private delegate void DownloadedHandler(object sender, EventArgs e);
 
@@ -26,7 +26,39 @@ namespace Scraper
             outputPipeline = new Pipeline();
         }
 
-        public void Run()
+        public void Run(Site site)
+        {
+            if (sites.Contains(site) == false)
+            {
+                Console.WriteLine("Site is not registered in Scraper List!");
+                return;
+            }
+
+            Queue<RawPage> rawPages = new Queue<RawPage>();
+            List<NodeResult> results = new List<NodeResult>();
+
+            foreach (PageLayout page in site.Pages.Values)
+            {
+                RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path));
+                PageDownloaded.Invoke(rawPage, EventArgs.Empty);
+
+                rawPages.Enqueue(rawPage);
+            }
+
+            Console.WriteLine("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
+
+            while (rawPages.Count > 0)
+            {
+                RawPage rawPage = rawPages.Dequeue();
+
+                results = pageProcessor.Next(rawPage, site);
+                PageProcessed.Invoke(results, EventArgs.Empty);
+
+                outputPipeline.Output(results, site, rawPage.URL.LocalPath);
+            }
+        }
+
+        public void RunAll()
         {
             if (sites.Count == 0)
             {
@@ -37,10 +69,9 @@ namespace Scraper
             Queue<RawPage> rawPages = new Queue<RawPage>();
             List<NodeResult> results = new List<NodeResult>();
 
-            while (sites.Count > 0)
+            foreach(Site site in sites)
             {
-                Site site = sites.Dequeue();
-                foreach(PageLayout page in site.Pages.Values)
+                foreach (PageLayout page in site.Pages.Values)
                 {
                     RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path));
                     PageDownloaded.Invoke(rawPage, EventArgs.Empty);
@@ -58,13 +89,13 @@ namespace Scraper
                     PageProcessed.Invoke(results, EventArgs.Empty);
 
                     outputPipeline.Output(results, site, rawPage.URL.LocalPath);
-                } 
+                }
             }
         }
 
         public void AddSite(Site site)
         {
-            sites.Enqueue(site);
+            sites.Add(site);
         }
     }
 }

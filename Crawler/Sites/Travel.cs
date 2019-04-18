@@ -23,7 +23,7 @@ namespace Crawler.Sites
 
         public List<Hotel> GetData()
         {
-            scraper.Run();
+            scraper.Run(Site);
 
             return Data;
         }
