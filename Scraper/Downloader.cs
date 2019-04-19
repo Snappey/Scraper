@@ -9,6 +9,8 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Internal;
+using OpenQA.Selenium.Support.UI;
+//using SeleniumExtras.WaitHelpers;
 
 namespace Scraper
 {
@@ -25,16 +27,23 @@ namespace Scraper
             chrome = new ChromeDriver(Environment.CurrentDirectory, options); // Chromedriver is copied across from the working directory to the output dir
 
             chrome.Manage().Window.Maximize();
-            chrome.ExecuteScript("window.scrollTo(0, 9000)");
-
+            chrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
         }
 
-        public RawPage Next(Uri uri)
+        public RawPage Next(Uri uri, string elementid)
         {
             chrome.Navigate().GoToUrl(uri.AbsoluteUri);
-            Thread.Sleep(15000); // TODO: Check if element exists before loading page and parsing https://stackoverflow.com/questions/43203243/how-to-get-webdriver-to-wait-for-page-to-load-c-selenium-project
-            string content = chrome.PageSource;   // TODO: DO this by checking for an exisiting element, pass this through the function based on data stored in the site data structure
+            try
+            {
+                var wait = new WebDriverWait(chrome, TimeSpan.FromSeconds(5));
+                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(elementid)));
+            }
+            catch(WebDriverTimeoutException)
+            {
+                Console.WriteLine($"No such element was found: {uri.PathAndQuery} with ID '{elementid}'");
+            }
 
+            string content = chrome.PageSource;  
             RawPage page = new RawPage
             {
                 Content = content,

@@ -16,8 +16,6 @@ namespace Scraper.Structures
         public PipelineOutput OutputType;
         #endregion
 
-        public string SearchElement = "body"; // TODO: Implement selenium waiting for search element
-
         public Site(Uri uri, bool incidx = true, bool scplnks = false, bool scpimgs = true, PipelineOutput outputtype = PipelineOutput.Plaintext)
         {
             URL = uri;
@@ -28,9 +26,9 @@ namespace Scraper.Structures
             OutputType = outputtype;
         }
 
-        public PageLayout AddPage(string page)
+        public PageLayout AddPage(string page, string searchElement = "body")
         {
-            PageLayout pageLayout = new PageLayout(URL, page);
+            PageLayout pageLayout = new PageLayout(URL, page, searchElement);
             Pages.Add(page, pageLayout);
             return pageLayout;
         }

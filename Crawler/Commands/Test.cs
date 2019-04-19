@@ -30,7 +30,7 @@ namespace Crawler.Commands
             london.AddNode(new NodeRequest { Property = "Country", XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[3]/span[2]" });
 
             Site dotnetperls = new Site(new Uri("https://www.dotnetperls.com"));
-            PageLayout indexLayout = dotnetperls.AddPage("");
+            PageLayout indexLayout = dotnetperls.AddPage("", "G");
             PageLayout asyncLayout = dotnetperls.AddPage("async");
 
             indexLayout.AddNode(new NodeRequest { Property = "Pages", XPath = "//body//a//b" });

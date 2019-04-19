@@ -39,7 +39,7 @@ namespace Scraper
 
             foreach (PageLayout page in site.Pages.Values)
             {
-                RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path));
+                RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path), page.SearchElement);
                 PageDownloaded.Invoke(rawPage, EventArgs.Empty);
 
                 rawPages.Enqueue(rawPage);
@@ -73,7 +73,7 @@ namespace Scraper
             {
                 foreach (PageLayout page in site.Pages.Values)
                 {
-                    RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path));
+                    RawPage rawPage = downloadManager.Next(new Uri(page.URL + page.Path), page.SearchElement);
                     PageDownloaded.Invoke(rawPage, EventArgs.Empty);
 
                     rawPages.Enqueue(rawPage);
