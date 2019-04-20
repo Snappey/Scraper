@@ -10,12 +10,16 @@ namespace Scraper.Structures
         public string Path;
         public Uri URL;
         public string SearchElement;
+        public string JSExecution;
+        public int PageDelay;
 
-        public PageLayout(Uri url, string path, string searchElement = "body")
+        public PageLayout(Uri url, string path, string searchElement = "body", string jsExec = "", int pageDelay = 0)
         {
             URL = url;
             Path = path;
             SearchElement = searchElement;
+            JSExecution = jsExec;
+            PageDelay = pageDelay;
         }
 
         public void AddNode(NodeRequest request)

@@ -26,9 +26,9 @@ namespace Scraper.Structures
             OutputType = outputtype;
         }
 
-        public PageLayout AddPage(string page, string searchElement = "body")
+        public PageLayout AddPage(string page, string searchElement = "body", string jsExec = "", int pageDelay = 0)
         {
-            PageLayout pageLayout = new PageLayout(URL, page, searchElement);
+            PageLayout pageLayout = new PageLayout(URL, page, searchElement, jsExec, pageDelay);
             Pages.Add(page, pageLayout);
             return pageLayout;
         }

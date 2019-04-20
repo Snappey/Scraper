@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web;
 using Crawler.Interfaces;
 using Crawler.Structures;
 using Scraper.Structures;
@@ -11,34 +12,52 @@ namespace Crawler.Sites
     // e.g. query: https://secure.rezserver.com/hotels/results/?check_in=04%2F17%2F2019&check_out=04%2F18%2F2019&rooms=1&adults=2&city_id=800013148&page=1&currency=GBP
     class Travel : ISite, IScrapable
     {
-        private Scraper.Scraper scraper;
         private List<Hotel> Data;
 
         public Travel(Scraper.Scraper scraper)
         {
-            this.scraper = scraper;
+            this.Scraper = scraper;
 
             this.Site = new Site(new Uri("https://secure.rezserver.com/"));
         }
 
         public List<Hotel> GetData()
         {
-            scraper.Run(Site);
+            Scraper.Run(Site);
 
             return Data;
         }
 
+        public Scraper.Scraper Scraper { get; set; }
         public Site Site { get; set; }
         public void RegisterPages()
         {
             if (Site != null)
             {
-                var layout = Site.AddPage(
-                    "hotels/results/?check_in=04%2F17%2F2019&check_out=04%2F18%2F2019&rooms=1&adults=2&city_id=800013148&page=1&currency=GBP");
 
-                layout.AddNode(new NodeRequest{Property = "Name", XPath = "//div/article/div[2]/div[1]/div[2]/a" });
+                UriBuilder uriBuilder = new UriBuilder(Site.URL);
 
-                scraper.AddSite(Site);
+                var param = HttpUtility.ParseQueryString(String.Empty);
+                param["rooms"] = "1";
+                param["adults"] = "2";
+                param["city_id"] = "800013148"; // Travel.com "Londons" City ID
+                param["currency"] = "GBP";
+                param["check_in"] = "22/04/2019";
+                param["check_out"] = "23/04/2018";
+                param["page"] = "1";
+
+                for (int i = 1; i < 10; i++)
+                {
+                    param["page"] = i.ToString();
+                    uriBuilder.Path = "hotels/results/";
+                    uriBuilder.Query = param.ToString();
+                    var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), "rs_main_css");
+
+                    layout.AddNode(new NodeRequest { Property = "Name", XPath = "//div/article/div[2]/div[1]/div[2]/a" });
+                }
+
+
+                Scraper.AddSite(Site);
             }
             else
             {
