@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Crawler.Attributes;
 using Crawler.Structures;
+using Scraper;
 using Scraper.Structures;
 
 namespace Crawler.Commands
@@ -30,6 +31,7 @@ namespace Crawler.Commands
             london.AddNode(new NodeRequest { Property = "Country", XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[3]/span[2]" });
 
             Site dotnetperls = new Site(new Uri("https://www.dotnetperls.com"));
+            dotnetperls.OutputType = PipelineOutput.Object;
             PageLayout indexLayout = dotnetperls.AddPage("", "G");
             PageLayout asyncLayout = dotnetperls.AddPage("async");
 
@@ -43,6 +45,8 @@ namespace Crawler.Commands
 
             //scraper.RunAll();
             scraper.Run(dotnetperls);
+
+            var res = scraper.GetResult(dotnetperls, "/", "Pages");
 
             Console.ReadKey();
         }

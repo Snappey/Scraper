@@ -35,7 +35,12 @@ namespace Crawler
             }
         }
 
-        public void GetData()
+        public void GetData(ISite site)
+        {
+            // Just get data froma single site instead of all
+        }
+
+        public void GetAllData()
         {
             foreach (ISite site in Sites)
             {

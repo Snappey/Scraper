@@ -12,12 +12,13 @@ namespace Scraper
         private PageProcessor pageProcessor;
         private Pipeline outputPipeline;
 
-        private List<Site> sites = new List<Site>(); // TODO: Run should iterate through sites instead of a list of pages, store rawpages in the site structure rather than the scraper
+        private List<Site> sites = new List<Site>();
 
         private delegate void DownloadedHandler(object sender, EventArgs e);
 
         public event EventHandler PageDownloaded = delegate { };
         public event EventHandler PageProcessed = delegate { };
+        public event EventHandler PageCompleted = delegate { };
 
         public Scraper()
         {
@@ -55,6 +56,7 @@ namespace Scraper
                 PageProcessed.Invoke(results, EventArgs.Empty);
 
                 outputPipeline.Output(results, site, rawPage.URL.LocalPath);
+                PageCompleted.Invoke(results, EventArgs.Empty);
             }
         }
 
@@ -96,6 +98,34 @@ namespace Scraper
         public void AddSite(Site site)
         {
             sites.Add(site);
+        }
+
+        public List<NodeResult> GetResult(Site site, string page, string property="")
+        {
+            var data = outputPipeline.Data;
+            List<NodeResult> result = new List<NodeResult>();
+
+            if (data.ContainsKey(site))
+            {
+                if (data[site].ContainsKey(page))
+                {
+                    if (property == "")
+                    {
+                        foreach (KeyValuePair<string, NodeResult> keyValue in data[site][page])
+                        {
+                            result.Add(keyValue.Value);
+                        }
+                    }
+                    else
+                    {
+                        if (data[site][page].ContainsKey(property))
+                        {
+                            result.Add(data[site][page][property]);
+                        }
+                    }
+                }
+            }
+            return result;
         }
     }
 }

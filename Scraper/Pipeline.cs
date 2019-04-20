@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,16 +11,16 @@ namespace Scraper
 {
     class Pipeline
     {
+        // Site (www.dotnetperls.com) -> Page (www.dotnetperls.com/index -> Property (Description) -> NodeResult List
+        public Dictionary<Site, Dictionary<string, Dictionary<string, NodeResult>>> Data;
 
         public Pipeline()
         {
-            
+            Data = new Dictionary<Site, Dictionary<string, Dictionary<string, NodeResult>>>();
         }
 
         public void Output(List<NodeResult> outputNodes, Site site, string page)
         {
-            //PipelineOutput outputType = outputNodes.First().Site.OutputType;
-
             switch (site.OutputType)
             {
                 case PipelineOutput.Plaintext:
@@ -61,7 +62,21 @@ namespace Scraper
 
         private void ObjectHandler(List<NodeResult> outputNodes, Site site, string page)
         {
-            // TODO: Return an object in a field that the user can access, possibly change the output function to return a value. User can cast the object to their desired type
+            if (Data.ContainsKey(site) == false)
+            {
+                Data.Add(site, new Dictionary<string, Dictionary<string, NodeResult>>());
+            }
+
+            if (Data[site].ContainsKey(page) == false)
+            {
+                Data[site].Add(page, new Dictionary<string, NodeResult>());
+
+                var results = outputNodes.Where(pg => pg.Page == page);
+                foreach (NodeResult result in results)
+                {
+                    Data[site][page].Add(result.Property, result);
+                }
+            }
         }
 
         private void WriteFile(Site site, string filename, string output)
