@@ -100,27 +100,41 @@ namespace Scraper
             sites.Add(site);
         }
 
-        public List<NodeResult> GetResult(Site site, string page, string property="")
+        public List<NodeResult> GetResult(Site site, string page="", string property="")
         {
             var data = outputPipeline.Data;
             List<NodeResult> result = new List<NodeResult>();
 
+
             if (data.ContainsKey(site))
             {
-                if (data[site].ContainsKey(page))
+                if (page == "")
                 {
-                    if (property == "")
+                    foreach (KeyValuePair<string, Dictionary<string, NodeResult>> keyValue in data[site])
                     {
-                        foreach (KeyValuePair<string, NodeResult> keyValue in data[site][page])
+                        foreach (NodeResult nodeResult in keyValue.Value.Values)
                         {
-                            result.Add(keyValue.Value);
+                            result.Add(nodeResult);
                         }
                     }
-                    else
+                }
+                else
+                {
+                    if (data[site].ContainsKey(page))
                     {
-                        if (data[site][page].ContainsKey(property))
+                        if (property == "")
                         {
-                            result.Add(data[site][page][property]);
+                            foreach (KeyValuePair<string, NodeResult> keyValue in data[site][page])
+                            {
+                                result.Add(keyValue.Value);
+                            }
+                        }
+                        else
+                        {
+                            if (data[site][page].ContainsKey(property))
+                            {
+                                result.Add(data[site][page][property]);
+                            }
                         }
                     }
                 }
