@@ -12,6 +12,7 @@ namespace Crawler.Structures
         public string Postcode;
         public string Phonenumber;
         public DateTime DateGathered;
-        public string Price;
+        public HotelReservations ReservationData;
+        public List<string> Extras;
     }
 }
