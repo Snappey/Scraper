@@ -14,4 +14,10 @@
     <ProjectReference Include="..\Scraper\Scraper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="local.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

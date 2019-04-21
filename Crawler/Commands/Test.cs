@@ -44,7 +44,9 @@ namespace Crawler.Commands
             scraper.AddSite(dotnetperls);
 
             //scraper.RunAll();
-            scraper.Run(dotnetperls);
+            //scraper.Run(dotnetperls);
+
+            Storage storage = new Storage("local.db");
 
             var res = scraper.GetResult(dotnetperls, "/", "Pages");
 

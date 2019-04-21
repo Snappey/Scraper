@@ -22,7 +22,7 @@ namespace Crawler
             // TODO: Register site structure for scraping
             Sites.Register();
 
-            Sites.GetAllData();
+            //Sites.GetAllData();
             // Sites.GetData();
             // TODO: Start scraper
             // TODO: Register progress on pages based on 
