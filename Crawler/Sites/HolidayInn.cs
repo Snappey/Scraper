@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using Crawler.Interfaces;
 using Crawler.Structures;
+using Scraper;
 using Scraper.Structures;
 
 namespace Crawler.Sites
@@ -17,11 +18,14 @@ namespace Crawler.Sites
             this.Scraper = Scraper;
 
             this.Site = new Site(new Uri("https://www.holidayinn.com/"));
+            this.Site.OutputType = PipelineOutput.Object;
         }
 
         public List<Hotel> GetData()
         {
             Scraper.Run(Site);
+
+            var test = Scraper.GetResult(Site);
 
             return null;
         }
