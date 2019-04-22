@@ -72,11 +72,36 @@ namespace Crawler.Sites
                 
                 var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), "topOfPage", String.Concat(Enumerable.Repeat(js, 20)), 850);
 
-                layout.AddNode(new NodeRequest { Property = "Name", XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[1]/div/div/span[1]/a" });
-                layout.AddNode(new NodeRequest { Property = "Location", XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[1]/div/div/span[2]/a" });
-                layout.AddNode(new NodeRequest { Property = "Address", XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[1]" });
-                layout.AddNode(new NodeRequest { Property = "Postcode", XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[1]" });
-                layout.AddNode(new NodeRequest { Property = "Country", XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[3]/span[2]" });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "Name",
+                    XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[1]/div/div/span[1]/a"
+                });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "City",
+                    XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[1]/div/div/span[2]/a"
+                });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "Address",
+                    XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[1]"
+                });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "Postcode",
+                    XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[3]/span[1]"
+                });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "Country",
+                    XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-address/div/div/span[3]/span[2]"
+                });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "Phonenumber",
+                    XPath = "//div/hotel-row/div[1]/div/div/hotel-details/div/div/div[2]/div[1]/hotel-phone-number/div[2]/div/div/a"
+                });
 
                 Scraper.AddSite(Site);
             }
