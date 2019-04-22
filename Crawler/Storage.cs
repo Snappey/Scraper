@@ -10,15 +10,18 @@ namespace Crawler
     {
         private string database;
         private SQLiteConnection connection;
-        private SQLiteCommandBuilder queryBuilder;
+
+        private string hotelTable = "hotels";
+        private string reservationTable = "hotels_reservation";
 
         public Storage(string database)
         {
             this.database = database;
 
             Init();
+            CreateSchema();
 
-            Console.Write("Test");
+            Console.Write("Storage ctor done");
         }
 
         private void Init()
@@ -26,22 +29,22 @@ namespace Crawler
             connection = new SQLiteConnection();
             connection.ConnectionString = $"Data Source={database}";
 
-            queryBuilder = new SQLiteCommandBuilder();
-
             try
             {
                 connection.Open();
             }
             catch (Exception e)
             {
-
+                // Connection
             }
             connection.Close();
         }
 
         private void CreateSchema()
         {
-            string createtable = @"CREATE TABLE `hotels`(
+            connection.Open();
+
+            string createtable = @"CREATE TABLE IF NOT EXISTS `{tbl}`(
                 name TEXT,
                 city TEXT,
                 Address TEXT,
@@ -49,10 +52,22 @@ namespace Crawler
                 Phonenumber TEXT,
                 Gathered DATETIME,
                 Extras TEXT
-            )";
+            )".Replace("{tbl}", hotelTable);
             
-            new SQLiteCommand(createtable).ExecuteNonQuery();
+            new SQLiteCommand(createtable, connection).ExecuteNonQuery();
 
+            string reservationtable = @"CREATE TABLE IF NOT EXISTS `{tbl}`(
+                name TEXT,
+                city TEXT,
+                check_in DATETIME,
+                check_out DATETIME,
+                price TEXT,
+                currency TEXT
+            )".Replace("{tbl}", reservationTable);
+
+            new SQLiteCommand(reservationtable, connection).ExecuteNonQuery();
+
+            connection.Close();
         }
     }
 }

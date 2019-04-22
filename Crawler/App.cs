@@ -13,16 +13,18 @@ namespace Crawler
 
         private CommandManager Commands;
         private SiteManager Sites;
+        private Storage Storage;
 
         public App()
         {
             Commands = new CommandManager();
             Sites = new SiteManager();
+            Storage = new Storage("local.db");
 
             // TODO: Register site structure for scraping
             Sites.Register();
 
-            //Sites.GetAllData();
+            Sites.GetAllData();
             // Sites.GetData();
             // TODO: Start scraper
             // TODO: Register progress on pages based on 
