@@ -46,7 +46,14 @@ namespace Scraper
 
             if (jsexec != String.Empty)
             {
-                chrome.ExecuteScript(jsexec);
+                try
+                {
+                    chrome.ExecuteScript(jsexec);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine($"Javascript Error: {e}");
+                }
             }
 
             Thread.Sleep(pagedelay);
