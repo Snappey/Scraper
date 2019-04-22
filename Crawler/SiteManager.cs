@@ -29,7 +29,7 @@ namespace Crawler
             HolidayInn holidayInn = new HolidayInn(scraper);
             Sites.Add(holidayInn);
 
-            RegisterScrapingSites();
+            //RegisterScrapingSites();
         }
 
         private void RegisterScrapingSites()

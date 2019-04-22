@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Crawler.Structures;
 using Scraper.Structures;
 
 namespace Crawler.Interfaces
@@ -9,6 +10,6 @@ namespace Crawler.Interfaces
     {
         Scraper.Scraper Scraper { get; set; }
         Site Site { get; set; }
-        void RegisterPages();
+        void RegisterPages(RegisterArgs args=null);
     }
 }

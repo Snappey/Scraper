@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Data.SQLite;
+using Crawler.Structures;
 
 namespace Crawler
 {
@@ -22,6 +23,16 @@ namespace Crawler
             CreateSchema();
 
             Console.Write("Storage ctor done");
+        }
+
+        public void AddHotel(Hotel hotel)
+        {
+
+        }
+
+        public void HasHotel()
+        {
+
         }
 
         private void Init()

@@ -23,19 +23,37 @@ namespace Crawler.Sites
 
         public List<Hotel> GetData()
         {
+            RegisterArgs args = new RegisterArgs
+            {
+                CheckIn = DateTime.Now.AddDays(1),
+                CheckOut = DateTime.Now.AddDays(2),
+            };
+
+            RegisterPages(args);
+
             Scraper.Run(Site);
 
             var results = Scraper.GetResult(Site);
 
-            List<Hotel> hotels = Hotel.Map(results);
+            List<Hotel> hotels = Hotel.Map(results, args); // TODO: Pass arguments from the scraper to the map results (Used for check in/out dates)
 
             return hotels;
+        }
+
+        private string[] ConvertDate(DateTime date)
+        {
+            string[] dateStrings = new string[2];
+
+            dateStrings[0] = date.Day.ToString();
+            dateStrings[1] = (date.Month - 1).ToString() + (date.Year).ToString();
+
+            return dateStrings;
         }
 
         public Scraper.Scraper Scraper { get; set; }
         public Site Site { get; set; }
 
-        public void RegisterPages()
+        public void RegisterPages(RegisterArgs args)
         {
             if (Site != null)
             {
@@ -48,10 +66,19 @@ namespace Crawler.Sites
                 param["qRad"] = "300"; // Radius to search
                 param["qRdU"] = "mi"; // Distance Units
                 //param["currency"] = "GBP";
-                param["qCiD"] = "22"; // Check in Date
-                param["qCiMy"] = "32019"; // Check in Month/Year (Month - 1)
-                param["qCoD"] = "23"; // Check out Date
-                param["qCoMy"] = "32019"; // Check out Money/Year (Month - 1)
+
+                string[] checkin = new string[2];
+                string[] checkout = new string[2];
+                if (args != null)
+                {
+                    checkin = ConvertDate(args.CheckIn);
+                    checkout = ConvertDate(args.CheckOut);
+                }
+
+                param["qCiD"] = checkin[0]; // Check in Date
+                param["qCiMy"] = checkin[1]; // Check in Month/Year (Month - 1)
+                param["qCoD"] = checkout[0]; // Check out Date
+                param["qCoMy"] = checkout[1]; // Check out Money/Year (Month - 1)
 
                 uriBuilder.Path = "hotels/gb/en/find-hotels/hotel/list";
                 uriBuilder.Query = param.ToString();

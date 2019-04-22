@@ -21,13 +21,13 @@ namespace Crawler
             Sites = new SiteManager();
             Storage = new Storage("local.db");
 
-            // TODO: Register site structure for scraping
-            Sites.Register();
+            Sites.Register(); // Gets all Site Providers
+            var hotelsList = Sites.GetAllData(); // Returns a list of hotels from the providers after they've ran
 
-            Sites.GetAllData();
-            // Sites.GetData();
-            // TODO: Start scraper
-            // TODO: Register progress on pages based on 
+            foreach (List<Hotel> hotels in hotelsList)
+            {
+                hotels.ForEach((hotel) => {Storage.AddHotel(hotel);});
+            }
 
             Loop();
         }

@@ -26,7 +26,10 @@ namespace Crawler.Structures
         /// <param name="nodeResults">
         /// List of results from scraping a website
         /// </param>
-        public static List<Hotel> Map(List<NodeResult> nodeResults)
+        /// <param name="args">
+        /// Register Args, stores checkin/out data used previously for registering pages with scraper
+        /// </param>
+        public static List<Hotel> Map(List<NodeResult> nodeResults, RegisterArgs args)
         {
             List<Dictionary<string, string>> mappingList = new List<Dictionary<string, string>>();
 
@@ -57,29 +60,40 @@ namespace Crawler.Structures
                     {
                         field.SetValue(hotel, node[field.Name]);
                     }
+                }
+                reservation.Price = ParseProperty<float>("PriceL", node);
+                reservation.Currency = ParseProperty<string>("Currency", node);
+                reservation.CheckIn = args.CheckIn;
+                reservation.CheckOut = args.CheckOut;
 
-                    if (field.Name == "PriceL")
-                    {
-                        float price = 0;
-                        bool successParse = float.TryParse(node[field.Name], out price);
-
-                        if (successParse)
-                        {
-                            reservation.Price = price;
-                        }
-                    }
-                }            
+                hotel.ReservationData.AddDate(reservation);
                 hotel.DateGathered = DateTime.Now;
                 hotels.Add(hotel);
             }
-
             return hotels;
         }
 
+        private static T ParseProperty<T>(string key,  Dictionary<string, string> node)
+        {
+            T output;
+            string val;
+            if (node.TryGetValue(key, out val))
+            {
+                try
+                {
+                    return (T)Convert.ChangeType(val, typeof(T));
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            return default(T);
+        }
 
         public override string ToString()
         {
-            return $"{this.Name} - {this.City} : {this.Address}";
+            return $"{Name} - {City} : {Address}";
         }
     }
 }
