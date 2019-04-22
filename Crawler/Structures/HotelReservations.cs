@@ -33,6 +33,18 @@ namespace Crawler.Structures
             return true;
         }
 
+        public bool AddDate(HotelReservation reservation)
+        {
+            int idx = this.Contains(reservation.CheckIn, reservation.CheckOut);
+            if (idx >= 0)
+            {
+                reservations.RemoveAt(idx);
+            }
+
+            reservations.Add(reservation);
+            return true;
+        }
+
         public int Contains(DateTime checkIn, DateTime checkOut)
         {
             int idx = -1;
