@@ -11,6 +11,8 @@ namespace Scraper.Structures
         public Dictionary<string, PageLayout> Pages = new Dictionary<string, PageLayout>();
         private LogStream logStream;
 
+        public event EventHandler LogReceived = delegate { };
+
         #region Config Options
         public bool IncludeIndex;
         public bool ScrapeLinks;
@@ -40,6 +42,12 @@ namespace Scraper.Structures
         public void Log(string log, LogType type = LogType.Information)
         {
             logStream.Log(log, this, type);
+
+            LogReceived.Invoke(this, new LogEventArgs
+            {
+                Log = log,
+                Type = type,
+            });
         }
 
         public override string ToString()
