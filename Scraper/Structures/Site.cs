@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using OpenQA.Selenium;
 
 namespace Scraper.Structures
 {
@@ -8,6 +9,7 @@ namespace Scraper.Structures
     {
         public Uri URL;
         public Dictionary<string, PageLayout> Pages = new Dictionary<string, PageLayout>();
+        private LogStream logStream;
 
         #region Config Options
         public bool IncludeIndex;
@@ -24,19 +26,21 @@ namespace Scraper.Structures
             ScrapeLinks = scplnks;
             ScrapeImages = scplnks;
             OutputType = outputtype;
+
+            logStream = new LogStream();
         }
 
-        public PageLayout AddPage(string page, string searchElement = "body", string jsExec = "", int pageDelay = 0)
+        public PageLayout AddPage(string page, By searchElement, string jsExec = "", string xPathFilter = "", int pageDelay = 0)
         {
-            PageLayout pageLayout = new PageLayout(URL, page, searchElement, jsExec, pageDelay);
+            PageLayout pageLayout = new PageLayout(URL, page, searchElement, jsExec, xPathFilter, pageDelay);
             Pages.Add(page, pageLayout);
             return pageLayout;
         }
 
-        /*public void AddPages(List<string> pages)
+        public void Log(string log, LogType type = LogType.Information)
         {
-            pages.ForEach((pg) => { Pages.Add(pg, new PageLayout(URL, pg)); });
-        }*/
+            logStream.Log(log, this, type);
+        }
 
         public override string ToString()
         {

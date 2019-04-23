@@ -18,19 +18,18 @@ namespace Scraper
             List<NodeRequest> layouts = site.Pages[rawPage.URL.PathAndQuery.Remove(0,1)].Nodes;
             List<NodeResult> htmlNodes = new List<NodeResult>();
 
-            Console.WriteLine("|> Processing, " + rawPage.URL);
+            site.Log("Processing, " + rawPage.URL);
             foreach(NodeRequest request in layouts)
             {
-                Console.WriteLine("| > '" + request.Property + "' - {XPath: " + request.XPath + "}");
+                site.Log(request.Property + " - {XPath: " + request.XPath + "}", LogType.Processing);
 
                 var nodes = html.DocumentNode.SelectNodes(request.XPath);
 
                 if (nodes != null)
                 {
-                    int i = 1;
                     foreach(HtmlNode node in nodes)
                     {
-                        Console.WriteLine("|  ---> #" + i++ + ": '" + node.InnerText + "'");
+                        site.Log(request.Property + ": " + node.InnerText, LogType.Processing);
                     }
 
                     NodeResult result = new NodeResult();
@@ -42,7 +41,7 @@ namespace Scraper
                     htmlNodes.Add(result);
                 } 
             }
-            Console.Write("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
+            //Console.WriteLine("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
             return htmlNodes;
         }
     }

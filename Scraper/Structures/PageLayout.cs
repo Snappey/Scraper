@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using OpenQA.Selenium;
 
 namespace Scraper.Structures
 {
@@ -9,16 +10,18 @@ namespace Scraper.Structures
         public List<NodeRequest> Nodes = new List<NodeRequest>();
         public string Path;
         public Uri URL;
-        public string SearchElement;
+        public By SearchElement;
+        public string XPathFilter;
         public string JSExecution;
         public int PageDelay;
 
-        public PageLayout(Uri url, string path, string searchElement = "body", string jsExec = "", int pageDelay = 0)
+        public PageLayout(Uri url, string path, By searchElement, string jsExec = "", string xPathFilter = "", int pageDelay = 0)
         {
             URL = url;
             Path = path;
             SearchElement = searchElement;
             JSExecution = jsExec;
+            XPathFilter = xPathFilter;
             PageDelay = pageDelay;
         }
 

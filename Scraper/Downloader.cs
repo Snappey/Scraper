@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Net;
+using System.Drawing;
 using System.Threading;
 using Scraper.Structures;
-using System.Threading.Tasks;
+using HtmlAgilityPack;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Interactions;
-using OpenQA.Selenium.Internal;
 using OpenQA.Selenium.Support.UI;
+
 //using SeleniumExtras.WaitHelpers;
 
 namespace Scraper
@@ -23,25 +21,34 @@ namespace Scraper
             ChromeOptions options = new ChromeOptions();
             //options.AddArgument("headless");
             options.AddArgument("--log-level=3");
+            options.AddArgument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3112.50 Safari/537.36");
 
-            chrome = new ChromeDriver(Environment.CurrentDirectory, options); // Chromedriver is copied across from the working directory to the output dir
+            ChromeDriverService service = ChromeDriverService.CreateDefaultService(Environment.CurrentDirectory);
+            service.SuppressInitialDiagnosticInformation = true;
+
+            // Environment.CurrentDirectory
+            chrome = new ChromeDriver(service, options); // Chromedriver is copied across from the working directory to the output dir
 
             chrome.Manage().Window.Maximize();
+            chrome.Manage().Window.Position = new Point(0, 2000);
             chrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
-        public RawPage Next(Uri uri, string elementid, string jsexec, int pagedelay)
+        public DownloadResult Next(Uri uri, By elementid, string jsexec, string xpathfilter, int pagedelay)
         {
-            chrome.Navigate().GoToUrl(uri.AbsoluteUri);
+            DownloadResult result = new DownloadResult();
 
+            chrome.Navigate().GoToUrl(uri.AbsoluteUri);
+            // TODO: This needs refactoring to account for multiple issues, error catching, request polling and source timeout
             try
             {
                 var wait = new WebDriverWait(chrome, TimeSpan.FromSeconds(10));
-                wait.Until(ExpectedConditions.ElementIsVisible(By.Id(elementid))); // Captcha ID: recaptcha-anchor
+                wait.Until(ExpectedConditions.ElementIsVisible(elementid)); // Captcha ID: recaptcha-anchor
             }
             catch(WebDriverTimeoutException)
             {
-                Console.WriteLine($"No such element was found: {uri.PathAndQuery} with ID '{elementid}'");
+                result.Logs.Add($"No such element was found: {uri.PathAndQuery} with ID '{elementid}'");
+                result.Status &= DownloadStatus.ErrorOccurred;
             }
 
             if (jsexec != String.Empty)
@@ -52,23 +59,60 @@ namespace Scraper
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine($"Javascript Error: {e}");
+                    result.Logs.Add($"Javascript Error: {e}");
+                    result.Status &= DownloadStatus.ErrorOccurred;
                 }
             }
 
             Thread.Sleep(pagedelay);
 
-            string content = chrome.PageSource;  
-            RawPage page = new RawPage
+            string content;
+            try
             {
-                Content = content,
-                Time = DateTime.Now,
-                URL = uri
-            };
+                content = chrome.PageSource;
+            }
+            catch
+            {
+                result.Logs.Add($"Failed to get source of {chrome.Url}");
+                result.Status = DownloadStatus.Failed;
+                return result;
+            }
+            
+            result.Logs.Add(uri + " - Downloaded");
+            result.Status &= DownloadStatus.Success;
 
-            Console.WriteLine("| > " + uri + " - Downloaded");
-            return page;
+            if (xpathfilter == String.Empty)
+            {
+                RawPage page = new RawPage
+                {
+                    Content = content,
+                    Time = DateTime.Now,
+                    URL = uri
+                };
+
+                result.Results =  new List<RawPage>{page};       
+            }
+            else
+            {
+                HtmlDocument document = new HtmlDocument();
+                document.LoadHtml(content);
+                var nodes = document.DocumentNode.SelectNodes(xpathfilter);
+                List<RawPage> pages = new List<RawPage>();
+
+                foreach (HtmlNode node in nodes)
+                {
+                    pages.Add(new RawPage
+                    {
+                        Content = node.InnerHtml,
+                        Time = DateTime.Now,
+                        URL = uri,
+                    });
+                }
+                
+                result.Results = pages;
+            }
+
+            return result;
         }
     }
-
 }
