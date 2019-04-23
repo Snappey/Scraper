@@ -23,8 +23,8 @@ namespace Crawler
             //Travel travel = new Travel(scraper);
             //Sites.Add(travel);
 
-            //IHG ihg = new IHG(scraper);
-            //Sites.Add(ihg);
+            IHG ihg = new IHG(scraper);
+            Sites.Add(ihg);
 
             HolidayInn holidayInn = new HolidayInn(scraper);
             Sites.Add(holidayInn);
@@ -61,6 +61,11 @@ namespace Crawler
                 data.Add(site.GetData());
             }
             return data;
+        }
+
+        public void FlushData()
+        {
+            scraper.FlushData();
         }
     }
 }

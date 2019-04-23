@@ -38,6 +38,11 @@ namespace Scraper
                     result.Site = site;
                     result.Page = rawPage.URL.AbsolutePath;
 
+                    if (request.Attribute != null)
+                    {
+                        result.Attribute = request.Attribute;
+                    }
+
                     htmlNodes.Add(result);
                 } 
             }

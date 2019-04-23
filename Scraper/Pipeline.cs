@@ -12,12 +12,12 @@ namespace Scraper
     class Pipeline
     {
         // TODO: Convert this to a structure, will make it much easier to iterate
-        // Site (www.dotnetperls.com) -> Page (www.dotnetperls.com/index -> Property (Description) -> NodeResult List
-        public Dictionary<Site, Dictionary<string, Dictionary<string, List<NodeResult>>>> Data;
+        // Site (www.dotnetperls.com) -> Page (www.dotnetperls.com/index -> NodeResult List
+        public Dictionary<Site, Dictionary<string, List<List<NodeResult>>>> Data;
 
         public Pipeline()
         {
-            Data = new Dictionary<Site, Dictionary<string, Dictionary<string, List<NodeResult>>>>();
+            Data = new Dictionary<Site, Dictionary<string, List<List<NodeResult>>>>();
         }
 
         public void Output(List<NodeResult> outputNodes, Site site, string page)
@@ -63,30 +63,26 @@ namespace Scraper
 
         private void ObjectHandler(List<NodeResult> outputNodes, Site site, string page)
         {
-            if (Data.ContainsKey(site) == false)
+            if (Data.ContainsKey(site) == false) // TODO: Refactor mapping process, Object handler should group objects in a list based on their arrival rather than property to preserve missing data from entries (e.g. rooms not being available)
             {
-                Data.Add(site, new Dictionary<string, Dictionary<string, List<NodeResult>>>());
+                Data.Add(site, new Dictionary<string, List<List<NodeResult>>>());
             }
 
             if (Data[site].ContainsKey(page) == false)
             {
-                Data[site].Add(page, new Dictionary<string, List<NodeResult>>());
+                Data[site].Add(page, new List<List<NodeResult>>());
 
-                var results = outputNodes.Where(pg => pg.Page == page);
-                foreach (NodeResult result in results)
-                {
-                    if (Data[site][page].ContainsKey(result.Property) == false) { Data[site][page].Add(result.Property, new List<NodeResult>());}
-                    Data[site][page][result.Property].Add(result);
-                }
+
+                //if (Data[site][page].ContainsKey(result.Property) == false) { Data[site][page].Add(result.Property, new List<NodeResult>());}
+                //Data[site][page][result.Property].Add(result);
+                    Data[site][page].Add(outputNodes);
             }
             else
             {
-                var results = outputNodes.Where(pg => pg.Page == page);
-                foreach (NodeResult result in results)
-                {
-                    if (Data[site][page].ContainsKey(result.Property) == false) { Data[site][page].Add(result.Property, new List<NodeResult>()); }
-                    Data[site][page][result.Property].Add(result);
-                }
+
+                    //if (Data[site][page].ContainsKey(result.Property) == false) { Data[site][page].Add(result.Property, new List<NodeResult>()); }
+                    //Data[site][page][result.Property].Add(result);
+                    Data[site][page].Add(outputNodes);
             }
         }
 

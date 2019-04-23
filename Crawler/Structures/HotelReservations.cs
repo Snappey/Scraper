@@ -110,6 +110,11 @@ namespace Crawler.Structures
 
             return searchReservation;
         }
+
+        public List<HotelReservation> GetAllReservations()
+        {
+            return reservations;
+        }
     }
 
     class HotelReservation

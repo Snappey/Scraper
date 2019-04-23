@@ -11,5 +11,6 @@ namespace Scraper.Structures
         public Site Site;
         public string Property;
         public string Page;
+        public string Attribute;
     }
 }

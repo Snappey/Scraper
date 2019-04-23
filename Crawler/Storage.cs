@@ -25,7 +25,48 @@ namespace Crawler
 
         public void AddHotel(Hotel hotel)
         {
+            if (hotel.Name == null || hotel.City == null) { return; }
+            connection.Open();
+            using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels` VALUES (@name, @city, @address, @postcode, @phonenumber, @gathered, @extras, @scrapeurl, @hotelurl)", connection))
+            {
+                //{hotel.Name}, {hotel.City}, {hotel.Address}, {hotel.Postcode}, {hotel.Phonenumber}, {hotel.DateGathered}, {hotel.Extras.ToString()}, {hotel.ScrapeURL}, {hotel.HotelURL}
+                SQLiteParameter[] parameters = 
+                {
+                    new SQLiteParameter("@name", hotel.Name),
+                    new SQLiteParameter("@city", hotel.City),
+                    new SQLiteParameter("@address", hotel.Address),
+                    new SQLiteParameter("@postcode", hotel.Postcode),
+                    new SQLiteParameter("@phonenumber", hotel.Phonenumber), 
+                    new SQLiteParameter("@gathered", hotel.DateGathered.ToShortDateString()),
+                    new SQLiteParameter("@extras", ""), // TODO: Hook up extras list
+                    new SQLiteParameter("@scrapeurl", hotel.ScrapeURL),
+                    new SQLiteParameter("@hotelurl", hotel.HotelURL), 
+                };
+                command.Parameters.AddRange(parameters);
 
+                command.ExecuteNonQuery();
+            }
+
+            foreach (HotelReservation hotelReservation in hotel.ReservationData.GetAllReservations())
+            {
+                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels_reservations` VALUES (@name, @city, @checkin, @checkout, @price, @currency)", connection))
+                {
+                    //{hotel.Name}, {hotel.City}, {hotelReservation.CheckIn}, {hotelReservation.CheckOut}, {hotelReservation.Price}, {hotelReservation.Currency}
+                    SQLiteParameter[] parameters =
+                    {
+                        new SQLiteParameter("name", hotel.Name),
+                        new SQLiteParameter("city", hotel.City),
+                        new SQLiteParameter("checkin", hotelReservation.CheckIn.ToShortDateString()),
+                        new SQLiteParameter("checkout", hotelReservation.CheckOut.ToShortDateString()),
+                        new SQLiteParameter("price", hotelReservation.Price),
+                        new SQLiteParameter("currency", hotelReservation.Currency), 
+                    };
+                    command.Parameters.AddRange(parameters);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+            connection.Close();
         }
 
         public void HasHotel(Hotel hotel)
@@ -56,11 +97,13 @@ namespace Crawler
             string createtable = @"CREATE TABLE IF NOT EXISTS `{tbl}`(
                 name TEXT,
                 city TEXT,
-                Address TEXT,
-                Postcode TEXT,
-                Phonenumber TEXT,
-                Gathered DATETIME,
-                Extras TEXT
+                address TEXT,
+                postcode TEXT,
+                phonenumber TEXT,
+                gathered DATETIME,
+                extras TEXT,
+                search_url TEXT,
+                hotel_url TEXT
             )".Replace("{tbl}", hotelTable);
             
             new SQLiteCommand(createtable, connection).ExecuteNonQuery();

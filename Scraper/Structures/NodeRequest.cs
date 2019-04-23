@@ -8,5 +8,6 @@ namespace Scraper.Structures
     {
         public string XPath;
         public string Property;
+        public string Attribute;
     }
 }

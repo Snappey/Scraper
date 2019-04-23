@@ -29,8 +29,8 @@ namespace Scraper
             // Environment.CurrentDirectory
             chrome = new ChromeDriver(service, options); // Chromedriver is copied across from the working directory to the output dir
 
-            chrome.Manage().Window.Maximize();
             chrome.Manage().Window.Position = new Point(0, 2000);
+            chrome.Manage().Window.Size = new Size(1920, 1080);
             chrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
@@ -39,6 +39,7 @@ namespace Scraper
             DownloadResult result = new DownloadResult();
 
             chrome.Navigate().GoToUrl(uri.AbsoluteUri);
+ 
             // TODO: This needs refactoring to account for multiple issues, error catching, request polling and source timeout
             try
             {
@@ -63,6 +64,9 @@ namespace Scraper
                     result.Status &= DownloadStatus.ErrorOccurred;
                 }
             }
+
+            new WebDriverWait(chrome, TimeSpan.FromSeconds(75)).Until(
+                d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
 
             Thread.Sleep(pagedelay);
 

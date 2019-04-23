@@ -10,6 +10,6 @@ namespace Crawler.Interfaces
     {
         Scraper.Scraper Scraper { get; set; }
         Site Site { get; set; }
-        void RegisterPages(RegisterArgs args=null);
+        void RegisterPages(RequestArgs args=null);
     }
 }

@@ -30,7 +30,7 @@ namespace Crawler.Sites
 
         public Scraper.Scraper Scraper { get; set; }
         public Site Site { get; set; }
-        public void RegisterPages(RegisterArgs args)
+        public void RegisterPages(RequestArgs args)
         {
             if (Site != null)
             {

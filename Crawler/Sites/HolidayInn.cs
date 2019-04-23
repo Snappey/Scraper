@@ -24,7 +24,7 @@ namespace Crawler.Sites
 
         public List<Hotel> GetData()
         {
-            RegisterArgs args = new RegisterArgs
+            RequestArgs args = new RequestArgs
             {
                 CheckIn = DateTime.Now.AddDays(1),
                 CheckOut = DateTime.Now.AddDays(2),
@@ -34,10 +34,7 @@ namespace Crawler.Sites
 
             Scraper.Run(Site);
 
-            //var results = Scraper.GetResult(Site);
-            var results = Scraper.GetRawResult()[Site];
-
-            List<Hotel> hotels = Hotel.Map(results, args); // TODO: Pass arguments from the scraper to the map results (Used for check in/out dates)
+            List<Hotel> hotels = Hotel.Map(Scraper.GetRawResult()[Site], args); // TODO: pass base site url for mapping
 
             return hotels;
         }
@@ -55,7 +52,7 @@ namespace Crawler.Sites
         public Scraper.Scraper Scraper { get; set; }
         public Site Site { get; set; }
 
-        public void RegisterPages(RegisterArgs args)
+        public void RegisterPages(RequestArgs args)
         {
             if (Site != null)
             {
@@ -84,17 +81,24 @@ namespace Crawler.Sites
 
                 uriBuilder.Path = "hotels/gb/en/find-hotels/hotel/list";
                 uriBuilder.Query = param.ToString();
-                // TODO: //div/hotel-row/
+
                 var js =
                     "angular.element(document.evaluate('//*[@id=\"applicationWrapper\"]/div[2]/div/div/div[9]/div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue).scope().hotelList.bottomInView();";
 
-                var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), By.ClassName("infoSummary"), String.Concat(Enumerable.Repeat(js, 2)), "//div/hotel-row", 850);
+                var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), By.ClassName("infoSummary"), String.Concat(Enumerable.Repeat(js, 60)), "//div/hotel-row", 850);
 
                 layout.AddNode(new NodeRequest
                 {
                     Property = "Name",
                     XPath = "//div[1]/div/div/hotel-details/div/div/div[1]/div/div/span[1]/a"
                 });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "HotelURL",
+                    XPath = "//div[1]/div/div/hotel-details/div/div/div[1]/div/div/span[1]/a",
+                    Attribute = "href",
+                });
+
                 layout.AddNode(new NodeRequest
                 {
                     Property = "City",

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Crawler.Structures
 {
-    class RegisterArgs
+    class RequestArgs
     {
         public DateTime CheckIn;
         public DateTime CheckOut;

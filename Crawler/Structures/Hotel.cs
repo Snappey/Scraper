@@ -17,9 +17,11 @@ namespace Crawler.Structures
         public string Postcode;
         public string Phonenumber;
         public string Country;
+        public string ScrapeURL;
+        public string HotelURL;
         public DateTime DateGathered;
         public HotelReservations ReservationData;
-        public List<string> Extras;
+        public List<string> Extras = new List<string>();
 
         /// <summary>
         /// Maps a list of NodeResults potentially more than one hotel and returns a list of hotel objects mapping NodeResult properties to Hotel properties
@@ -30,75 +32,111 @@ namespace Crawler.Structures
         /// <param name="args">
         /// Register Args, stores checkin/out data used previously for registering pages with scraper
         /// </param>
-        public static List<Hotel> Map(Dictionary<string, Dictionary<string, List<NodeResult>>> nodeResults, RegisterArgs args)
+        public static List<Hotel> Map(Dictionary<string, List<List<NodeResult>>> nodeResults, RequestArgs args)
         {
             List<Dictionary<string, string>> mappingList = new List<Dictionary<string, string>>();
 
-            foreach(Dictionary<string, List<NodeResult>> node in nodeResults.Values)
+            /*foreach(List<List<NodeResult>> nodes in nodeResults.Values)
             {
-                foreach (KeyValuePair<string, List<NodeResult>> keyValue in node)
+                foreach (List<NodeResult> nodeList in nodes)
                 {
-                    for (var i = 0; i < keyValue.Value.Count; i++) // TODO: This wont work anymore, we need to iterate and fill up based on the property
+
+                    foreach (NodeResult node in nodeList)
                     {
-                        if (mappingList.Count <= i) { mappingList.Add(new Dictionary<string, string>()); }
+                       
+                        /*if (mappingList.Count <= i) { mappingList.Add(new Dictionary<string, string>()); }
+
+                        
 
                         HtmlNode first = new HtmlNode(HtmlNodeType.Element, new HtmlDocument(), 0);
                         first.SetAttributeValue("text", "");
-                        foreach (HtmlNode htmlNode in keyValue.Value[i].Nodes)
+                        foreach (HtmlNode htmlNode in node[i].Nodes)
                         {
                             first = htmlNode;
                             break;
                         }
 
-                        mappingList[i].Add(keyValue.Key, first.InnerText); // Flatten NodeResult based on index into corresponding dictionarie
+                        Console.WriteLine($"idx: {i}; text: {first.InnerText}; key: {node.Key}");
+                        if (res.Attribute != null && first.Attributes[res.Attribute] != null)
+                        {
+                            mappingList[i].Add(node.Key, first.Attributes[res.Attribute].Value);
+                        }
+                        else
+                        {
+                            mappingList[i].Add(node.Key, first.InnerText);
+                        }
+
+                      
                     }
                 }
 
-            }     
+            }*/
 
             List<Hotel> hotels = new List<Hotel>();
             List<FieldInfo> fields = typeof(Hotel).GetFields().ToList();
             Dictionary<string, FieldInfo> fieldNames = new Dictionary<string, FieldInfo>();
-
             fields.ForEach((field) => { fieldNames.Add(field.Name, field); });
 
-            foreach (Dictionary<string, string> node in mappingList)
+            foreach (KeyValuePair<string, List<List<NodeResult>>> nodeList in nodeResults) // Iterate each page
             {
-                Hotel hotel = new Hotel();
-                hotel.ReservationData = new HotelReservations();
-                HotelReservation reservation = new HotelReservation();
-
-                foreach (FieldInfo field in fields)
+                foreach (List<NodeResult> rawHotel in nodeList.Value) // Iterate each raw entry (List of NodeResults which should have all the properties for a Hotel)
                 {
-                    if (node.ContainsKey(field.Name))
+                    Hotel hotel = new Hotel();
+                    hotel.ReservationData = new HotelReservations();
+                    HotelReservation reservation = new HotelReservation();
+
+
+                    foreach (NodeResult result in rawHotel)
                     {
-                        field.SetValue(hotel, node[field.Name]);
+                        if (fieldNames.ContainsKey(result.Property))
+                        {
+                            if (result.Attribute != null)
+                            {
+                                var node = result.Nodes.FirstOrDefault();
+                                if (node?.Attributes[result.Attribute] != null)
+                                {
+                                    fieldNames[result.Property].SetValue(hotel, node.Attributes[result.Attribute].Value);
+                                }
+                                else
+                                {
+                                    fieldNames[result.Property].SetValue(hotel, result.Nodes.First().InnerText);
+                                }
+                            }
+                            else
+                            {
+                                fieldNames[result.Property].SetValue(hotel, result.Nodes.First().InnerText);
+                            }  
+                        }
                     }
+
+                    reservation.Price = ParseProperty<float>("PriceL", rawHotel);
+                    reservation.Currency = ParseProperty<string>("Currency", rawHotel);
+                    reservation.CheckIn = args.CheckIn;
+                    reservation.CheckOut = args.CheckOut;
+
+                    hotel.ReservationData.AddDate(reservation);
+                    hotel.DateGathered = DateTime.Now;
+                    hotels.Add(hotel);
                 }
-
-                reservation.Price = ParseProperty<float>("PriceL", node);
-                reservation.Currency = ParseProperty<string>("Currency", node);
-                reservation.CheckIn = args.CheckIn;
-                reservation.CheckOut = args.CheckOut;
-
-                hotel.ReservationData.AddDate(reservation);
-                hotel.DateGathered = DateTime.Now;
-                hotels.Add(hotel);
             }
+
             return hotels;
         }
 
-        private static T ParseProperty<T>(string key,  Dictionary<string, string> node)
+        private static T ParseProperty<T>(string key,  List<NodeResult> nodes)
         {
-            if (node.TryGetValue(key, out var val))
+            foreach (NodeResult node in nodes)
             {
-                try
+                if (node.Property == key)
                 {
-                    return (T)Convert.ChangeType(val, typeof(T));
-                }
-                catch
-                {
-                    // ignored
+                    try
+                    {
+                        return (T)Convert.ChangeType(node.Nodes.First().InnerText, typeof(T));
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
             }
             return default(T);

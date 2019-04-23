@@ -85,18 +85,23 @@ namespace Scraper
             sites.Add(site);
         }
 
-        public Dictionary<Site, Dictionary<string, Dictionary<string, List<NodeResult>>>> GetRawResult()
+        public Dictionary<Site, Dictionary<string, List<List<NodeResult>>>> GetRawResult()
         {
             return outputPipeline.Data;
+        }
+
+        public void FlushData()
+        {
+            outputPipeline.Data.Clear();
         }
 
         public List<NodeResult> GetResult(Site site, string page="", string property="")
         {
             var data = outputPipeline.Data;
             List<NodeResult> result = new List<NodeResult>();
+            // TODO: REFACTOR WHOLE METHOD
 
-
-            if (data.ContainsKey(site))
+            /*if (data.ContainsKey(site))
             {
                 if (page == "")
                 {
@@ -128,7 +133,7 @@ namespace Scraper
                         }
                     }
                 }
-            }
+            }*/
             return result;
         }
     }
