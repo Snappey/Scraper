@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using Crawler.Interfaces;
 using Crawler.Structures;
+using OpenQA.Selenium;
 using Scraper.Structures;
 
 namespace Crawler.Sites
@@ -27,7 +28,6 @@ namespace Crawler.Sites
         // srb_u=0
         // qRad=30
         // qRdU=mi
-        private string apikey = "tq5jhkg9mrc652ms9232yvs8";
 
         public IHG(Scraper.Scraper scraper)
         {
@@ -70,7 +70,7 @@ namespace Crawler.Sites
                 var js =
                     "angular.element(document.evaluate('//*[@id=\"applicationWrapper\"]/div[2]/div/div/div[9]/div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue).scope().hotelList.bottomInView();";
                 
-                var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), "topOfPage", String.Concat(Enumerable.Repeat(js, 20)), 850);
+                var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), By.Id("topOfPage"), String.Concat(Enumerable.Repeat(js, 20)), "//div/hotel-row/", 850);
 
                 layout.AddNode(new NodeRequest
                 {

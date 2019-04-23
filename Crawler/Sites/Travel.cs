@@ -4,6 +4,7 @@ using System.Text;
 using System.Web;
 using Crawler.Interfaces;
 using Crawler.Structures;
+using OpenQA.Selenium;
 using Scraper.Structures;
 
 namespace Crawler.Sites
@@ -12,7 +13,6 @@ namespace Crawler.Sites
     // e.g. query: https://secure.rezserver.com/hotels/results/?check_in=04%2F17%2F2019&check_out=04%2F18%2F2019&rooms=1&adults=2&city_id=800013148&page=1&currency=GBP
     class Travel : ISite, IScrapable
     {
-        private List<Hotel> Data;
 
         public Travel(Scraper.Scraper scraper)
         {
@@ -25,7 +25,7 @@ namespace Crawler.Sites
         {
             Scraper.Run(Site);
 
-            return Data;
+            return new List<Hotel>();
         }
 
         public Scraper.Scraper Scraper { get; set; }
@@ -51,7 +51,7 @@ namespace Crawler.Sites
                     param["page"] = i.ToString();
                     uriBuilder.Path = "hotels/results/";
                     uriBuilder.Query = param.ToString();
-                    var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), "rs_main_css");
+                    var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), By.Id("rs_main_css"));
 
                     layout.AddNode(new NodeRequest { Property = "Name", XPath = "//div/article/div[2]/div[1]/div[2]/a" });
                 }

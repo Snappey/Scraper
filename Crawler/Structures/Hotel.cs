@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using HtmlAgilityPack;
 using Scraper.Structures;
 
 namespace Crawler.Structures
@@ -29,17 +30,30 @@ namespace Crawler.Structures
         /// <param name="args">
         /// Register Args, stores checkin/out data used previously for registering pages with scraper
         /// </param>
-        public static List<Hotel> Map(List<NodeResult> nodeResults, RegisterArgs args)
+        public static List<Hotel> Map(Dictionary<string, Dictionary<string, List<NodeResult>>> nodeResults, RegisterArgs args)
         {
             List<Dictionary<string, string>> mappingList = new List<Dictionary<string, string>>();
 
-            foreach(NodeResult node in nodeResults)
+            foreach(Dictionary<string, List<NodeResult>> node in nodeResults.Values)
             {
-                for (var i = 0; i < node.Nodes.Count; i++)
+                foreach (KeyValuePair<string, List<NodeResult>> keyValue in node)
                 {
-                    if(mappingList.Count <= i) { mappingList.Add(new Dictionary<string, string>()); }
-                    mappingList[i].Add(node.Property, node.Nodes[i].InnerText); // Flatten NodeResult based on index into corresponding dictionarie
+                    for (var i = 0; i < keyValue.Value.Count; i++) // TODO: This wont work anymore, we need to iterate and fill up based on the property
+                    {
+                        if (mappingList.Count <= i) { mappingList.Add(new Dictionary<string, string>()); }
+
+                        HtmlNode first = new HtmlNode(HtmlNodeType.Element, new HtmlDocument(), 0);
+                        first.SetAttributeValue("text", "");
+                        foreach (HtmlNode htmlNode in keyValue.Value[i].Nodes)
+                        {
+                            first = htmlNode;
+                            break;
+                        }
+
+                        mappingList[i].Add(keyValue.Key, first.InnerText); // Flatten NodeResult based on index into corresponding dictionarie
+                    }
                 }
+
             }     
 
             List<Hotel> hotels = new List<Hotel>();
@@ -61,6 +75,7 @@ namespace Crawler.Structures
                         field.SetValue(hotel, node[field.Name]);
                     }
                 }
+
                 reservation.Price = ParseProperty<float>("PriceL", node);
                 reservation.Currency = ParseProperty<string>("Currency", node);
                 reservation.CheckIn = args.CheckIn;
@@ -75,9 +90,7 @@ namespace Crawler.Structures
 
         private static T ParseProperty<T>(string key,  Dictionary<string, string> node)
         {
-            T output;
-            string val;
-            if (node.TryGetValue(key, out val))
+            if (node.TryGetValue(key, out var val))
             {
                 try
                 {

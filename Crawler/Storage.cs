@@ -13,7 +13,7 @@ namespace Crawler
         private SQLiteConnection connection;
 
         private string hotelTable = "hotels";
-        private string reservationTable = "hotels_reservation";
+        private string reservationTable = "hotels_reservations";
 
         public Storage(string database)
         {
@@ -21,8 +21,6 @@ namespace Crawler
 
             Init();
             CreateSchema();
-
-            Console.Write("Storage ctor done");
         }
 
         public void AddHotel(Hotel hotel)
@@ -30,7 +28,7 @@ namespace Crawler
 
         }
 
-        public void HasHotel()
+        public void HasHotel(Hotel hotel)
         {
 
         }
@@ -44,7 +42,7 @@ namespace Crawler
             {
                 connection.Open();
             }
-            catch (Exception e)
+            catch
             {
                 // Connection
             }
