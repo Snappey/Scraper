@@ -18,19 +18,22 @@ namespace Scraper
             List<NodeRequest> layouts = site.Pages[rawPage.URL.PathAndQuery.Remove(0,1)].Nodes;
             List<NodeResult> htmlNodes = new List<NodeResult>();
 
-            site.Log("Processing, " + rawPage.URL);
+            site.Log("Processing, " + layouts.Count + " Nodes");
             foreach(NodeRequest request in layouts)
             {
-                site.Log(request.Property + " - {XPath: " + request.XPath + "}", LogType.Processing);
+                //site.Log(request.Property + " - {XPath: " + request.XPath + "}", LogType.Processing);
 
                 var nodes = html.DocumentNode.SelectNodes(request.XPath);
 
                 if (nodes != null)
                 {
-                    foreach(HtmlNode node in nodes)
+                    /*foreach(HtmlNode node in nodes)
                     {
-                        site.Log(request.Property + ": " + node.InnerText, LogType.Processing);
-                    }
+                        if (request.Property == "Name")
+                        {
+                            site.Log("Processing, " + node.InnerText);
+                        }
+                    }*/
 
                     NodeResult result = new NodeResult();
                     result.Property = request.Property;
@@ -46,6 +49,7 @@ namespace Scraper
                     htmlNodes.Add(result);
                 } 
             }
+            site.Log("Finished Processing!");
             //Console.WriteLine("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
             return htmlNodes;
         }

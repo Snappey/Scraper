@@ -5,6 +5,7 @@ using Crawler.Interfaces;
 using Crawler.Sites;
 using Crawler.Structures;
 using Scraper;
+using Scraper.Structures;
 
 namespace Crawler
 {
@@ -23,8 +24,8 @@ namespace Crawler
             //Travel travel = new Travel(scraper);
             //Sites.Add(travel);
 
-            IHG ihg = new IHG(scraper);
-            Sites.Add(ihg);
+            //IHG ihg = new IHG(scraper);
+            //Sites.Add(ihg);
 
             HolidayInn holidayInn = new HolidayInn(scraper);
             Sites.Add(holidayInn);
@@ -61,6 +62,20 @@ namespace Crawler
                 data.Add(site.GetData());
             }
             return data;
+        }
+
+        public List<Site> GetSites()
+        {
+            List<Site> res = new List<Site>();
+
+            foreach (ISite site in Sites)
+            {
+                if ((IScrapable) site != null)
+                {
+                    res.Add((site as IScrapable).Site);
+                }
+            }
+            return res;
         }
 
         public void FlushData()

@@ -7,6 +7,7 @@ namespace Scraper.Structures
 {
     public class Site
     {
+        public SiteStatus Status = SiteStatus.Pending;
         public Uri URL;
         public Dictionary<string, PageLayout> Pages = new Dictionary<string, PageLayout>();
         private LogStream logStream;
@@ -36,6 +37,7 @@ namespace Scraper.Structures
         {
             PageLayout pageLayout = new PageLayout(URL, page, searchElement, jsExec, xPathFilter, pageDelay);
             Pages.Add(page, pageLayout);
+            Log("Registered page: " + page);
             return pageLayout;
         }
 

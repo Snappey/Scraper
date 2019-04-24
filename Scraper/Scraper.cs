@@ -36,40 +36,49 @@ namespace Scraper
             Queue<RawPage> rawPages = new Queue<RawPage>();
             List<NodeResult> results = new List<NodeResult>();
 
+            site.Status = SiteStatus.Downloading;
+
             foreach (PageLayout page in site.Pages.Values)
+            {
+                site.Log("Downloading " + site.URL + "...", LogType.Downloader);
+                
+                DownloadResult result = downloadManager.Next(new Uri(page.URL + page.Path), page.SearchElement, page.JSExecution, page.XPathFilter, page.PageDelay);
+
+                if (result.Status.HasFlag(DownloadStatus.ErrorOccurred))
                 {
-                    DownloadResult result = downloadManager.Next(new Uri(page.URL + page.Path), page.SearchElement, page.JSExecution, page.XPathFilter, page.PageDelay);
-
-                    if (result.Status.HasFlag(DownloadStatus.ErrorOccurred))
-                    {
-                        site.Log("Error occurred in " + site.URL, LogType.Downloader);
-                    }
-
-                    if (result.Status.HasFlag(DownloadStatus.Failed))
-                    {
-                        site.Log("Failed to download " + site.URL + " skipped..", LogType.Downloader);
-                        continue;
-                    }
-
-                    result.Results.ForEach((rawPage) =>
-                    {
-                        PageDownloaded.Invoke(rawPage, EventArgs.Empty);
-                        rawPages.Enqueue(rawPage);
-                    });
-
+                    site.Log("Error occurred in " + site.URL, LogType.Downloader);
                 }
 
-                //Console.WriteLine("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
-
-                while (rawPages.Count > 0)
+                if (result.Status.HasFlag(DownloadStatus.Failed))
                 {
-                    RawPage rawPage = rawPages.Dequeue();
-
-                    results = pageProcessor.Next(rawPage, site);
-                    PageProcessed.Invoke(results, EventArgs.Empty);
-
-                    outputPipeline.Output(results, site, rawPage.URL.LocalPath);
+                    site.Log("Failed to download " + site.URL + " skipped..", LogType.Downloader);
+                    continue;
                 }
+
+                result.Results.ForEach((rawPage) =>
+                {
+                    PageDownloaded.Invoke(rawPage, EventArgs.Empty);
+                    rawPages.Enqueue(rawPage);
+                });
+
+                site.Log("Downloaded " + site.URL + "!", LogType.Downloader);
+
+            }
+
+            //Console.WriteLine("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
+
+            site.Status = SiteStatus.Processing;
+            while (rawPages.Count > 0)
+            {
+                RawPage rawPage = rawPages.Dequeue();
+
+                results = pageProcessor.Next(rawPage, site);
+                PageProcessed.Invoke(results, EventArgs.Empty);
+
+                outputPipeline.Output(results, site, rawPage.URL.LocalPath);
+            }
+
+            site.Status = SiteStatus.Finished;
         }
 
         public void RunAll()

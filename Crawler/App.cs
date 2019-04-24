@@ -23,16 +23,17 @@ namespace Crawler
             Storage = new Storage("local.db");
             Display = new ConsoleManager(Console.BufferWidth, 30);
 
-            /*Sites.Register(); // Gets all Site Providers
+            Sites.Register(); // Gets all Site Providers
+            Sites.GetSites().ForEach((site) => {Display.Attach(site);});
             var hotelsList = Sites.GetAllData(); // Returns a list of hotels from the providers after they've ran
 
-            foreach (List<Hotel> hotels in hotelsList)
+            /*foreach (List<Hotel> hotels in hotelsList)
             {
                 hotels.ForEach((hotel) => {Storage.AddHotel(hotel);}); // TODO: Run hotel data through a product matching class, work out if we  already store that hotel first then assign it an ID and store it
             }
             
             Sites.FlushData();*/
-            
+
             Loop();
         }
 
@@ -93,10 +94,11 @@ namespace Crawler
             while (IsRunning)
             {
                 var text = Console.ReadLine();
-                if (text == String.Empty) { continue; }
-
-                CommandInput(text);
-
+                if (text != String.Empty)
+                {
+                   CommandInput(text);
+                } 
+                Display.ResetCursor();
             }
         }
     }
