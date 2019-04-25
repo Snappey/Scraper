@@ -11,7 +11,6 @@ namespace Crawler.Commands
     [CommandName("stop")]
     [CommandAlias("shutdown"), CommandAlias("exit")]
     [CommandDescription("Exit the program")]
-    [Attributes.CommandArgument("f", "force", "force shutdown")]
     class Stop : Command
     {
         public override void Invoke(CommandArguments args)
