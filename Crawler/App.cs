@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Crawler.Report;
 using Crawler.Structures;
 using Scraper;
 using Scraper.Structures;
@@ -15,6 +16,7 @@ namespace Crawler
         private CommandManager Commands;
         private SiteManager Sites;
         private Storage Storage;
+        private ProductMatching productMatching;
 
         public App()
         {
@@ -22,6 +24,9 @@ namespace Crawler
             Sites = new SiteManager();
             Storage = new Storage("local.db");
             Display = new ConsoleManager(170, 60);
+            productMatching = new ProductMatching(Storage);
+
+            //productMatching.Start();
 
             Sites.Register(); // Gets all Site Providers
             Sites.GetSites().ForEach((site) => {Display.Attach(site);});
@@ -35,6 +40,9 @@ namespace Crawler
             Sites.FlushData();
 
             Loop();
+
+            //Creator creator = new Creator("Report");
+
         }
 
         private void CommandInput(string text)
