@@ -30,18 +30,20 @@ namespace Crawler.Sites
 
             List<Hotel> hotels = Hotel.Map(Scraper.GetRawResult()[Site], args);
 
-            hotels = PostProcess(hotels);
+            hotels = PostProcess(hotels, args);
 
             return hotels;
         }
 
-        private List<Hotel> PostProcess(List<Hotel> hotels)
+        private List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
         {
             List<Hotel> newHotels = new List<Hotel>();
 
             foreach (Hotel hotel in hotels)
             {
                 hotel.ScrapeURL = Site.URL.Host;
+                hotel.AmtPeople = args.People;
+                hotel.AmtRooms = args.Rooms;
 
                 newHotels.Add(hotel);
             }

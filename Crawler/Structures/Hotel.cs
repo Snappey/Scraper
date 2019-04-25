@@ -19,6 +19,8 @@ namespace Crawler.Structures
         public string Country;
         public string ScrapeURL;
         public string HotelURL;
+        public string AmtPeople;
+        public string AmtRooms;
         public DateTime DateGathered;
         public HotelReservations ReservationData;
         public string Extras;

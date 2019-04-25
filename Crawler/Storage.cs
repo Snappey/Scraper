@@ -49,7 +49,7 @@ namespace Crawler
 
             foreach (HotelReservation hotelReservation in hotel.ReservationData.GetAllReservations())
             {
-                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels_reservations` VALUES (@scrapeurl, @name, @city, @checkin, @checkout, @price, @currency)", connection))
+                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels_reservations` VALUES (@scrapeurl, @name, @city, @checkin, @checkout, @price, @currency, @rooms, @people)", connection))
                 {
                     //{hotel.Name}, {hotel.City}, {hotelReservation.CheckIn}, {hotelReservation.CheckOut}, {hotelReservation.Price}, {hotelReservation.Currency}
                     SQLiteParameter[] parameters =
@@ -61,6 +61,7 @@ namespace Crawler
                         new SQLiteParameter("checkout", hotelReservation.CheckOut.ToShortDateString()),
                         new SQLiteParameter("price", hotelReservation.Price),
                         new SQLiteParameter("currency", hotelReservation.Currency), 
+                         
                     };
                     command.Parameters.AddRange(parameters);
 
@@ -180,7 +181,9 @@ namespace Crawler
                 check_in DATETIME,
                 check_out DATETIME,
                 price TEXT,
-                currency TEXT
+                currency TEXT,
+                rooms TEXT,
+                people TEXT,
             )".Replace("{tbl}", reservationTable);
 
             new SQLiteCommand(reservationtable, connection).ExecuteNonQuery();
