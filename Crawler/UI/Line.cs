@@ -82,6 +82,12 @@ namespace Crawler.UI
                         }
 
 
+                        var oldColour = Console.ForegroundColor;
+                        if (Site.Status == SiteStatus.Finished)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        }
+
                         string content = Site.URL + " - " + Site.Status + " (" + string.Format("{0:00}:{1:00}:{2:00}", time.Hours, time.Minutes, time.Seconds) + ")";
                         if (content.Length >= maxW)
                         {
@@ -92,7 +98,9 @@ namespace Crawler.UI
                             string spacing = string.Concat(Enumerable.Repeat(" ", maxW - content.Length - (border.Length * 2)));
                             Console.Write(border + content + spacing + border);
                         }
-                        
+
+                        Console.ForegroundColor = oldColour;
+
                     }
                     else
                     {

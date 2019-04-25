@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -108,6 +109,8 @@ namespace Crawler
         {
             // Main Drawing Loop
             Console.CursorVisible = false;
+            var oldIn = Console.In;
+            Console.SetIn(TextReader.Null);
 
             DrawLog();
 
@@ -118,6 +121,7 @@ namespace Crawler
                 line.Update();   
             }
 
+            Console.SetIn(oldIn);
             Console.CursorVisible = true;
 
         }
