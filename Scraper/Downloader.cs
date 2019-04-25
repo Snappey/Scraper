@@ -26,7 +26,6 @@ namespace Scraper
             ChromeDriverService service = ChromeDriverService.CreateDefaultService(Environment.CurrentDirectory);
             service.SuppressInitialDiagnosticInformation = true;
 
-            // Environment.CurrentDirectory
             chrome = new ChromeDriver(service, options); // Chromedriver is copied across from the working directory to the output dir
 
             chrome.Manage().Window.Position = new Point(0, 2000);
@@ -34,7 +33,7 @@ namespace Scraper
             chrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
-        public DownloadResult Next(Uri uri, By elementid, string jsexec, string xpathfilter, int pagedelay)
+        public DownloadResult Next(Uri uri, By elementid, string jsexec, string xpathfilter, int pagedelay) // TODO: Implement recursive xpaths, allow for links to be added back to the queue and apply xpaths
         {
             DownloadResult result = new DownloadResult();
 
@@ -117,6 +116,21 @@ namespace Scraper
             }
 
             return result;
+        }
+
+        public RawPage DownloadPage(Uri url)
+        {
+            chrome.Navigate().GoToUrl(url.AbsoluteUri);
+
+            new WebDriverWait(chrome, TimeSpan.FromSeconds(10)).Until( // Wait till page is fully loaded
+                d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
+
+            return new RawPage
+            {
+                Content = chrome.PageSource,
+                Time = DateTime.Now,
+                URL = url,
+            };
         }
     }
 }

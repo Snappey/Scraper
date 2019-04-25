@@ -21,7 +21,7 @@ namespace Crawler.Structures
         public string HotelURL;
         public DateTime DateGathered;
         public HotelReservations ReservationData;
-        public List<string> Extras = new List<string>();
+        public string Extras;
 
         /// <summary>
         /// Maps a list of NodeResults potentially more than one hotel and returns a list of hotel objects mapping NodeResult properties to Hotel properties
@@ -99,17 +99,17 @@ namespace Crawler.Structures
                                 }
                                 else
                                 {
-                                    fieldNames[result.Property].SetValue(hotel, result.Nodes.First().InnerText);
+                                    fieldNames[result.Property].SetValue(hotel, result.Nodes.First().InnerText.Trim(new char[] {'\r','\n','\t', ' '}));
                                 }
                             }
                             else
                             {
-                                fieldNames[result.Property].SetValue(hotel, result.Nodes.First().InnerText);
+                                fieldNames[result.Property].SetValue(hotel, result.Nodes.First().InnerText.Trim(new char[]{'\r','\n', '\t', ' '}));
                             }  
                         }
                     }
 
-                    reservation.Price = ParseProperty<float>("PriceL", rawHotel);
+                    reservation.Price = ParseProperty<string>("PriceL", rawHotel);
                     reservation.Currency = ParseProperty<string>("Currency", rawHotel);
                     reservation.CheckIn = args.CheckIn;
                     reservation.CheckOut = args.CheckOut;
@@ -117,6 +117,8 @@ namespace Crawler.Structures
                     hotel.ReservationData.AddDate(reservation);
                     hotel.DateGathered = DateTime.Now;
                     hotels.Add(hotel);
+
+                    //rawHotel.Clear();
                 }
             }
 
@@ -131,7 +133,7 @@ namespace Crawler.Structures
                 {
                     try
                     {
-                        return (T)Convert.ChangeType(node.Nodes.First().InnerText, typeof(T));
+                        return (T)Convert.ChangeType(node.Nodes.First().InnerText.Trim(new char[] {'\r','\n','\t', ' '}), typeof(T));
                     }
                     catch
                     {

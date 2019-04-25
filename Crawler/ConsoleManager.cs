@@ -22,7 +22,8 @@ namespace Crawler
 
         public ConsoleManager(int consoleWidth, int consoleHeight)
         {
-            Console.BufferWidth = consoleWidth;
+            Console.WindowWidth = consoleWidth;
+            Console.WindowHeight = consoleHeight;
             Console.BufferHeight = consoleHeight;
 
             defX = 2;
@@ -77,17 +78,17 @@ namespace Crawler
                     lines[i].SetLineType(LineType.Divider);
                 }
 
-                if (i > 1 && i < 6)
+                if (i > 1 && i < 12)
                 {
                     lines[i].SetLineType(LineType.Information);
                 }
 
-                if (i == 6)
+                if (i == 12)
                 {
                     lines[i].SetLineType(LineType.Divider);
                 }
 
-                if (i >= 7 && i < Console.BufferHeight - 2)
+                if (i >= 13 && i < Console.BufferHeight - 2)
                 {
                     lines[i].SetLineType(LineType.Output);
                 }

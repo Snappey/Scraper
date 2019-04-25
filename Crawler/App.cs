@@ -21,18 +21,18 @@ namespace Crawler
             Commands = new CommandManager();
             Sites = new SiteManager();
             Storage = new Storage("local.db");
-            Display = new ConsoleManager(Console.BufferWidth, 30);
+            Display = new ConsoleManager(170, 60);
 
             Sites.Register(); // Gets all Site Providers
             Sites.GetSites().ForEach((site) => {Display.Attach(site);});
             var hotelsList = Sites.GetAllData(); // Returns a list of hotels from the providers after they've ran
 
-            /*foreach (List<Hotel> hotels in hotelsList)
+            foreach (List<Hotel> hotels in hotelsList)
             {
                 hotels.ForEach((hotel) => {Storage.AddHotel(hotel);}); // TODO: Run hotel data through a product matching class, work out if we  already store that hotel first then assign it an ID and store it
             }
             
-            Sites.FlushData();*/
+            Sites.FlushData();
 
             Loop();
         }

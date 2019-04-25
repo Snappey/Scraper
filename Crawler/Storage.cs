@@ -38,7 +38,7 @@ namespace Crawler
                     new SQLiteParameter("@postcode", hotel.Postcode),
                     new SQLiteParameter("@phonenumber", hotel.Phonenumber), 
                     new SQLiteParameter("@gathered", hotel.DateGathered.ToShortDateString()),
-                    new SQLiteParameter("@extras", ""), // TODO: Hook up extras list
+                    new SQLiteParameter("@extras", hotel.Extras),
                     new SQLiteParameter("@scrapeurl", hotel.ScrapeURL),
                     new SQLiteParameter("@hotelurl", hotel.HotelURL), 
                 };
@@ -49,11 +49,12 @@ namespace Crawler
 
             foreach (HotelReservation hotelReservation in hotel.ReservationData.GetAllReservations())
             {
-                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels_reservations` VALUES (@name, @city, @checkin, @checkout, @price, @currency)", connection))
+                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels_reservations` VALUES (@site, @name, @city, @checkin, @checkout, @price, @currency)", connection))
                 {
                     //{hotel.Name}, {hotel.City}, {hotelReservation.CheckIn}, {hotelReservation.CheckOut}, {hotelReservation.Price}, {hotelReservation.Currency}
                     SQLiteParameter[] parameters =
                     {
+                        new SQLiteParameter("site", hotel.ScrapeURL), 
                         new SQLiteParameter("name", hotel.Name),
                         new SQLiteParameter("city", hotel.City),
                         new SQLiteParameter("checkin", hotelReservation.CheckIn.ToShortDateString()),
@@ -109,6 +110,7 @@ namespace Crawler
             new SQLiteCommand(createtable, connection).ExecuteNonQuery();
 
             string reservationtable = @"CREATE TABLE IF NOT EXISTS `{tbl}`(
+                site TEXT,
                 name TEXT,
                 city TEXT,
                 check_in DATETIME,

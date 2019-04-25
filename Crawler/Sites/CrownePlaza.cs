@@ -11,30 +11,13 @@ using Scraper.Structures;
 
 namespace Crawler.Sites
 {
-    class IHG : ISite, IScrapable
+    class CrownePlaza : ISite, IScrapable
     {
-        // https://www.ihg.com/
-        // e.g. query: https://www.ihg.com/hotels/gb/en/find-hotels/hotel/list?qDest=London,%20United%20Kingdom&
-        // qCiMy=32019
-        // qCiD=21
-        // qCoMy=32019
-        // qCoD=22
-        // qAdlt=2
-        // qChld=0
-        // qRms=1
-        // qRtP=6CBARC
-        // qAkamaiCC=GB
-        // qSrt=sDD
-        // qBrs=re.ic.in.vn.cp.vx.hi.ex.rs.cv.sb.cw.ma.ul.ki.va
-        // srb_u=0
-        // qRad=30
-        // qRdU=mi
-
-        public IHG(Scraper.Scraper scraper)
+        public CrownePlaza(Scraper.Scraper Scraper)
         {
-            this.Scraper = scraper;
+            this.Scraper = Scraper;
 
-            this.Site = new Site(new Uri("https://www.ihg.com/"));
+            this.Site = new Site(new Uri("https://www.crowneplaza.com"));
             this.Site.OutputType = PipelineOutput.Object;
         }
 
@@ -50,7 +33,7 @@ namespace Crawler.Sites
 
             Scraper.Run(Site);
 
-            List<Hotel> hotels = Hotel.Map(Scraper.GetRawResult()[Site], args);
+            List<Hotel> hotels = Hotel.Map(Scraper.GetRawResult()[Site], args); // TODO: pass base site url for mapping
 
             hotels = PostProcess(hotels);
 
@@ -71,7 +54,6 @@ namespace Crawler.Sites
             return newHotels;
         }
 
-
         private string[] ConvertDate(DateTime date)
         {
             string[] dateStrings = new string[2];
@@ -84,6 +66,7 @@ namespace Crawler.Sites
 
         public Scraper.Scraper Scraper { get; set; }
         public Site Site { get; set; }
+
         public void RegisterPages(RequestArgs args)
         {
             if (Site != null)
@@ -114,11 +97,10 @@ namespace Crawler.Sites
                 uriBuilder.Path = "hotels/gb/en/find-hotels/hotel/list";
                 uriBuilder.Query = param.ToString();
 
-
                 var js =
                     "angular.element(document.evaluate('//*[@id=\"applicationWrapper\"]/div[2]/div/div/div[9]/div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue).scope().hotelList.bottomInView();";
-                
-                var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), By.Id("topOfPage"), String.Concat(Enumerable.Repeat(js, 60)), "//div/hotel-row", 850);
+
+                var layout = Site.AddPage(uriBuilder.Uri.PathAndQuery.Substring(1), By.ClassName("infoSummary"), String.Concat(Enumerable.Repeat(js, 60)), "//div/hotel-row", 850);
 
                 layout.AddNode(new NodeRequest
                 {

@@ -13,7 +13,7 @@ namespace Crawler.Structures
     {
         private List<HotelReservation> reservations = new List<HotelReservation>();
 
-        public bool AddDate(DateTime checkIn, DateTime checkOut, float price, string currency)
+        public bool AddDate(DateTime checkIn, DateTime checkOut, string price, string currency)
         {
             int idx = this.Contains(checkIn, checkOut);
             if (idx >= 0)
@@ -121,7 +121,7 @@ namespace Crawler.Structures
     {
         public DateTime CheckIn;
         public DateTime CheckOut;
-        public float Price;
+        public string Price;
         public string Currency;
     }
 }

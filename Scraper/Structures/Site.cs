@@ -7,10 +7,13 @@ namespace Scraper.Structures
 {
     public class Site
     {
-        public SiteStatus Status = SiteStatus.Pending;
         public Uri URL;
         public Dictionary<string, PageLayout> Pages = new Dictionary<string, PageLayout>();
         private LogStream logStream;
+
+        public SiteStatus Status = SiteStatus.Pending;
+        public DateTime SiteStart = DateTime.MinValue;
+        public DateTime SiteFinished = DateTime.MinValue;
 
         public event EventHandler LogReceived = delegate { };
 
@@ -47,7 +50,7 @@ namespace Scraper.Structures
 
             LogReceived.Invoke(this, new LogEventArgs
             {
-                Log = log,
+                Log = $"[{DateTime.Now.ToShortTimeString()}] {URL.Host}: {log}",
                 Type = type,
             });
         }

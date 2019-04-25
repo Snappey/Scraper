@@ -36,7 +36,23 @@ namespace Crawler.Sites
 
             List<Hotel> hotels = Hotel.Map(Scraper.GetRawResult()[Site], args); // TODO: pass base site url for mapping
 
+            hotels = PostProcess(hotels);
+
             return hotels;
+        }
+
+        private List<Hotel> PostProcess(List<Hotel> hotels)
+        {
+            List<Hotel> newHotels = new List<Hotel>();
+
+            foreach (Hotel hotel in hotels)
+            {
+                hotel.ScrapeURL = Site.URL.Host;
+
+                newHotels.Add(hotel);
+            }
+
+            return newHotels;
         }
 
         private string[] ConvertDate(DateTime date)
@@ -143,6 +159,11 @@ namespace Crawler.Sites
                 {
                     Property = "Currency",
                     XPath = "//div[1]/div/div/div[3]/div[1]/div/span[2]"
+                });
+                layout.AddNode(new NodeRequest
+                {
+                    Property = "Extras",
+                    XPath = "//div[1]/div/div/hotel-details/div/div/div[2]/div[2]/ul"
                 });
 
                 Scraper.AddSite(Site);

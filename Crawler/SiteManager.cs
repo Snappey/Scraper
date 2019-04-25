@@ -24,11 +24,23 @@ namespace Crawler
             //Travel travel = new Travel(scraper);
             //Sites.Add(travel);
 
-            //IHG ihg = new IHG(scraper);
-            //Sites.Add(ihg);
+            IHG ihg = new IHG(scraper);
+            Sites.Add(ihg);
 
             HolidayInn holidayInn = new HolidayInn(scraper);
             Sites.Add(holidayInn);
+            
+            CrownePlaza crownePlaza = new CrownePlaza(scraper);
+            Sites.Add(crownePlaza);
+
+            HoteldotCom hoteldotCom = new HoteldotCom(scraper);
+            Sites.Add(hoteldotCom);
+
+            Booking booking = new Booking(scraper);
+            Sites.Add(booking);
+
+            Expedia expedia = new Expedia(scraper);
+            Sites.Add(expedia);
 
             //RegisterScrapingSites();
         }

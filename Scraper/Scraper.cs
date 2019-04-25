@@ -37,6 +37,7 @@ namespace Scraper
             List<NodeResult> results = new List<NodeResult>();
 
             site.Status = SiteStatus.Downloading;
+            site.SiteStart = DateTime.Now;
 
             foreach (PageLayout page in site.Pages.Values)
             {
@@ -72,13 +73,14 @@ namespace Scraper
             {
                 RawPage rawPage = rawPages.Dequeue();
 
-                results = pageProcessor.Next(rawPage, site);
+                results = pageProcessor.Next(rawPage, site, downloadManager);
                 PageProcessed.Invoke(results, EventArgs.Empty);
 
                 outputPipeline.Output(results, site, rawPage.URL.LocalPath);
             }
 
             site.Status = SiteStatus.Finished;
+            site.SiteFinished = DateTime.Now;
         }
 
         public void RunAll()

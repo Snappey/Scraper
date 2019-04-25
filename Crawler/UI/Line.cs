@@ -66,7 +66,25 @@ namespace Crawler.UI
                 {
                     if (Site != null)
                     {
-                        string content = Site.URL + " - " + Site.Status;
+                        TimeSpan time;
+                        if (Site.Status != SiteStatus.Pending)
+                        {
+                            if (Site.SiteFinished == DateTime.MinValue)
+                            {
+                                time = DateTime.Now.Subtract(Site.SiteStart).Duration();
+                            }
+                            else
+                            {
+                                time = Site.SiteFinished.Subtract(Site.SiteStart).Duration();
+                            }
+                        }
+                        else
+                        {
+                            time = TimeSpan.Zero;
+                        }
+
+
+                        string content = Site.URL + " - " + Site.Status + " (" + string.Format("{0:00}:{1:00}:{2:00}", time.Hours, time.Minutes, time.Seconds) + ")";
                         if (content.Length >= maxW)
                         {
                             Console.Write(border + content.Substring(0, maxW - content.Length - (border.Length * 2)) + border);
