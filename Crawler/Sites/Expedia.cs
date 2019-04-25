@@ -21,13 +21,8 @@ namespace Crawler.Sites
             this.Site.OutputType = PipelineOutput.Object;
         }
 
-        public List<Hotel> GetData()
+        public List<Hotel> GetData(RequestArgs args)
         {
-            RequestArgs args = new RequestArgs
-            {
-                CheckIn = DateTime.Now.AddDays(1),
-                CheckOut = DateTime.Now.AddDays(2),
-            };
 
             RegisterPages(args);
 
@@ -74,10 +69,10 @@ namespace Crawler.Sites
             UriBuilder uriBuilder = new UriBuilder(Site.URL);
 
             var param = HttpUtility.ParseQueryString(String.Empty);
-            param["destination"] = "London"; // TODO: Allow for variables to passed through from userinput
+            param["destination"] = args.City;
             param["startDate"] = args.CheckIn.ToShortDateString();
             param["endDate"] = args.CheckOut.ToShortDateString();
-            param["adults"] = "1";
+            param["adults"] = args.People;
             param["lodging"] = "hotel";
             param["sort"] = "distance";
             param["page"] = "1";

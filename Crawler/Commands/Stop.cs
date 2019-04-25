@@ -9,7 +9,6 @@ namespace Crawler.Commands
 {
     
     [CommandName("stop")]
-    [CommandAlias("shutdown"), CommandAlias("exit")]
     [CommandDescription("Exit the program")]
     class Stop : Command
     {

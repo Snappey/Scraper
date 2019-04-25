@@ -21,9 +21,6 @@ namespace Crawler
 
         public void Register()
         {
-            //Travel travel = new Travel(scraper);
-            //Sites.Add(travel);
-
             IHG ihg = new IHG(scraper);
             Sites.Add(ihg);
 
@@ -41,8 +38,6 @@ namespace Crawler
 
             Expedia expedia = new Expedia(scraper);
             Sites.Add(expedia);
-
-            //RegisterScrapingSites();
         }
 
         private void RegisterScrapingSites()
@@ -54,24 +49,24 @@ namespace Crawler
             }
         }
 
-        public List<Hotel> GetData(ISite site)
+        public List<Hotel> GetData(ISite site, RequestArgs args)
         {
             foreach (ISite isite in Sites)
             {
                 if (isite.Equals(site))
                 {
-                    return isite.GetData();
+                    return isite.GetData(args);
                 }
             }
             return new List<Hotel>();
         }
 
-        public List<List<Hotel>> GetAllData()
+        public List<List<Hotel>> GetAllData(RequestArgs args)
         {
             List<List<Hotel>> data = new List<List<Hotel>>();
             foreach (ISite site in Sites)
             {
-                data.Add(site.GetData());
+                data.Add(site.GetData(args));
             }
             return data;
         }
@@ -82,12 +77,33 @@ namespace Crawler
 
             foreach (ISite site in Sites)
             {
-                if ((IScrapable) site != null)
-                {
-                    res.Add((site as IScrapable).Site);
-                }
+                res.Add(site.Site);
             }
             return res;
+        }
+
+        public Site GetSite(Uri url)
+        {
+            foreach (ISite site in Sites)
+            {
+                if (site.Site.URL == url)
+                {
+                    return site.Site;
+                }
+            }
+            return null;
+        }
+
+        public ISite GetSiteInterface(Uri url)
+        {
+            foreach (ISite site in Sites)
+            {
+                if (site.Site.URL == url)
+                {
+                    return site;
+                }
+            }
+            return null;
         }
 
         public void FlushData()

@@ -21,7 +21,7 @@ namespace Crawler.Sites
             this.Site = new Site(new Uri("https://secure.rezserver.com/"));
         }
 
-        public List<Hotel> GetData()
+        public List<Hotel> GetData(RequestArgs args)
         {
             Scraper.Run(Site);
 

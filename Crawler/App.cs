@@ -29,72 +29,72 @@ namespace Crawler
             //productMatching.Start();
 
             Sites.Register(); // Gets all Site Providers
-            Sites.GetSites().ForEach((site) => {Display.Attach(site);});
-            var hotelsList = Sites.GetAllData(); // Returns a list of hotels from the providers after they've ran
+            Sites.GetSites().ForEach((site) => {Display.Attach(site);}); // Setup display for sites
+
+            /*var hotelsList = Sites.GetAllData(); // Returns a list of hotels from the providers after they've ran
 
             foreach (List<Hotel> hotels in hotelsList)
             {
                 hotels.ForEach((hotel) => {Storage.AddHotel(hotel);}); // TODO: Run hotel data through a product matching class, work out if we  already store that hotel first then assign it an ID and store it
             }
             
-            Sites.FlushData();
+            Sites.FlushData();*/
 
-            Loop();
+           
 
             //Creator creator = new Creator("Report");
 
         }
 
-        private void CommandInput(string text)
+        public void Start()
         {
-            var splitText = text.Split(' ');
-            string command = splitText[0];
-            CommandArguments arguments = new CommandArguments();
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] Type 'help' to see a list of all commands and arguments availible!");
+            Loop();
+        }
 
-            if (splitText.Length > 1)
+        public void Log(string log)
+        {
+            Display.Log(log, LogType.Information);
+        }
+
+        public Dictionary<string, Command> GetCommands()
+        {
+            return Commands.GetCommands();
+        }
+
+        public void GetSiteData(Uri site, RequestArgs args)
+        {
+            var isite = Sites.GetSiteInterface(site);
+
+            if (isite != null)
             {
-                string[] flags = new string[splitText.Length];
-                string[] parameters = new string[splitText.Length];
+                isite.GetData(args).ForEach((hotel) => { Storage.AddHotel(hotel); });
 
-                var paramcount = 0;
-                for (int i = 1; i < splitText.Length; i++)
-                {
-                    var arg = splitText[i];
-                    if (arg == string.Empty) { continue; }
-                    if (arg.Substring(0, 1) == "-")
-                    {
-                        // arg is a flag
-                        flags[paramcount] = arg;
-                        paramcount++;
-                    }
-                    else
-                    {
-                        // arg is an parameter
-                        if (paramcount - 1 > 0)
-                        {
-                            parameters[paramcount - 1] = arg;
-                        }
-                    }
+                Sites.FlushData();
+                Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] {site.Host} has finished!");
+            }
+            else
+            {
+                Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] Failed to find site of " + site.Host);
+            }
+        }
 
+        public void GetAllSiteData(RequestArgs args)
+        {
+            var hotelsList = Sites.GetAllData(args); // Returns a list of hotels from the providers after they've ran
 
-                }
-
-                for (int i = 0; i < flags.Length; i++)
-                {
-                    if (flags[i] == null) { continue; }
-                    if (parameters.Length > i && parameters[i] != null)
-                    {
-                        arguments.Add(flags[i], parameters[i]);
-                    }
-                    else
-                    {
-                        arguments.Add(flags[i], " ");
-                    }
-                }
+            foreach (List<Hotel> hotels in hotelsList)
+            {
+                hotels.ForEach((hotel) => {Storage.AddHotel(hotel);}); // TODO: Run hotel data through a product matching class, work out if we  already store that hotel first then assign it an ID and store it
             }
 
+            Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] All Sites have finished!");
+            Sites.FlushData();
+        }
 
-            Commands.Invoke(command, arguments);
+        public List<Site> GetSites()
+        {
+            return Sites.GetSites();
         }
 
         private void Loop()
@@ -104,7 +104,7 @@ namespace Crawler
                 var text = Console.ReadLine();
                 if (text != String.Empty)
                 {
-                   CommandInput(text);
+                   Commands.CommandInput(text);
                 } 
                 Display.ResetCursor();
             }

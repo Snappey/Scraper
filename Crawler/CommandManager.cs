@@ -116,7 +116,8 @@ namespace Crawler
                     }
                 }
             }
-            Invoke(command, arguments);
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] {text}"); // Echo back into console
+            Invoke(command, arguments);       
         }
 
         public bool Invoke(string cmd, CommandArguments args)
@@ -126,6 +127,8 @@ namespace Crawler
                 var cmds = commands[cmd];
 
                 cmds.Invoke(args);
+
+               
             }
             return false;
         }

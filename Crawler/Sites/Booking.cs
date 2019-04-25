@@ -20,13 +20,8 @@ namespace Crawler.Sites
             this.Site.OutputType = PipelineOutput.Object;
         }
 
-        public List<Hotel> GetData()
+        public List<Hotel> GetData(RequestArgs args)
         {
-            RequestArgs args = new RequestArgs
-            {
-                CheckIn = DateTime.Now.AddDays(1),
-                CheckOut = DateTime.Now.AddDays(2),
-            };
 
             RegisterPages(args);
 
@@ -102,11 +97,11 @@ namespace Crawler.Sites
             param["checkout_monthday"] = checkout[0];
             param["checkout_year"] = checkout[2];
 
-            param["group_adults"] = "1";
+            param["group_adults"] = args.People;
             param["group_children"] = "0";
-            param["no_rooms"] = "1";
+            param["no_rooms"] = args.Rooms;
             param["map"] = "0";
-            param["ss"] = "London";
+            param["ss"] = args.City;
             param["rows"] = "50";
             param["order"] = "distance_from_search";
 

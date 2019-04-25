@@ -5,12 +5,14 @@ using Scraper.Structures;
 
 namespace Crawler
 {
-    class Program
+    static class Program
     {
+        public static App App;
 
         static void Main(string[] args)
         {
-            App app = new App();
+            App = new App();
+            App.Start();
         }
     }
 }

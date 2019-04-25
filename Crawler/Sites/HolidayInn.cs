@@ -22,13 +22,8 @@ namespace Crawler.Sites
             this.Site.OutputType = PipelineOutput.Object;
         }
 
-        public List<Hotel> GetData()
+        public List<Hotel> GetData(RequestArgs args)
         {
-            RequestArgs args = new RequestArgs
-            {
-                CheckIn = DateTime.Now.AddDays(1),
-                CheckOut = DateTime.Now.AddDays(2),
-            };
 
             RegisterPages(args);
 
@@ -75,9 +70,9 @@ namespace Crawler.Sites
                 UriBuilder uriBuilder = new UriBuilder(Site.URL);
 
                 var param = HttpUtility.ParseQueryString(String.Empty); 
-                param["qRms"] = "1";
-                param["qAdlt"] = "2";
-                param["qDest"] = "London, United Kingdom"; // Travel.com "Londons" City ID
+                param["qRms"] = args.Rooms;
+                param["qAdlt"] = args.People;
+                param["qDest"] = args.City; // Travel.com "Londons" City ID
                 param["qRad"] = "300"; // Radius to search
                 param["qRdU"] = "mi"; // Distance Units
                 //param["currency"] = "GBP";

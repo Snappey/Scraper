@@ -24,7 +24,7 @@ namespace Scraper.Structures
         public PipelineOutput OutputType;
         #endregion
 
-        public Site(Uri uri, bool incidx = true, bool scplnks = false, bool scpimgs = true, PipelineOutput outputtype = PipelineOutput.Plaintext)
+        public Site(Uri uri, bool incidx = false, bool scplnks = false, bool scpimgs = false, PipelineOutput outputtype = PipelineOutput.Plaintext)
         {
             URL = uri;
 

@@ -49,12 +49,12 @@ namespace Crawler
 
             foreach (HotelReservation hotelReservation in hotel.ReservationData.GetAllReservations())
             {
-                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels_reservations` VALUES (@site, @name, @city, @checkin, @checkout, @price, @currency)", connection))
+                using (SQLiteCommand command = new SQLiteCommand($"INSERT INTO `hotels_reservations` VALUES (@scrapeurl, @name, @city, @checkin, @checkout, @price, @currency)", connection))
                 {
                     //{hotel.Name}, {hotel.City}, {hotelReservation.CheckIn}, {hotelReservation.CheckOut}, {hotelReservation.Price}, {hotelReservation.Currency}
                     SQLiteParameter[] parameters =
                     {
-                        new SQLiteParameter("site", hotel.ScrapeURL), 
+                        new SQLiteParameter("scrapeurl", hotel.ScrapeURL), 
                         new SQLiteParameter("name", hotel.Name),
                         new SQLiteParameter("city", hotel.City),
                         new SQLiteParameter("checkin", hotelReservation.CheckIn.ToShortDateString()),
@@ -174,7 +174,7 @@ namespace Crawler
             new SQLiteCommand(createtable, connection).ExecuteNonQuery();
 
             string reservationtable = @"CREATE TABLE IF NOT EXISTS `{tbl}`(
-                site TEXT,
+                search_url TEXT,
                 name TEXT,
                 city TEXT,
                 check_in DATETIME,
