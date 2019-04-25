@@ -28,9 +28,9 @@ namespace Crawler.Sites
 
             Scraper.Run(Site);
 
-            var rawResult = Scraper.GetRawResult()[Site]; // TODO: Processing section, 
+            var rawResult = Scraper.GetRawResult()[Site]; 
 
-            List<Hotel> hotels = Hotel.Map(rawResult, args); // TODO: pass base site url for mapping
+            List<Hotel> hotels = Hotel.Map(rawResult, args);
 
             hotels = PostProcess(hotels);
 

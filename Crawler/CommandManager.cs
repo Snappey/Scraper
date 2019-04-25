@@ -122,7 +122,7 @@ namespace Crawler
 
         public bool Invoke(string cmd, CommandArguments args)
         {
-            if (commands.ContainsKey(cmd.ToLower()))  // TODO: Iterate attribute data to check for aliases
+            if (commands.ContainsKey(cmd.ToLower()))
             {
                 var cmds = commands[cmd];
 

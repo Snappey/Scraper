@@ -33,7 +33,7 @@ namespace Scraper
             chrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
-        public DownloadResult Next(Uri uri, By elementid, string jsexec, string xpathfilter, int pagedelay) // TODO: Implement recursive xpaths, allow for links to be added back to the queue and apply xpaths
+        public DownloadResult Next(Uri uri, By elementid, string jsexec, string xpathfilter, int pagedelay)
         {
             DownloadResult result = new DownloadResult();
 

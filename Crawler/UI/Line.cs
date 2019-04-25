@@ -12,9 +12,7 @@ namespace Crawler.UI
     /// </summary>
     class Line
     {
-        private string text; // TODO: Assign each line a state enum which declares what it is used for, Output, Information, Title.
-                             // For output we can iterate through a fixed size queue and check based on the enum for the line to determine if we output
-                             // Information, will primarily be used for status on site scraping and data gathering. This can be used as output if the line is not bound to any site
+        private string text;
         private string border;
         private int row;
         private LineType type;

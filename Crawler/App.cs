@@ -26,22 +26,10 @@ namespace Crawler
             Display = new ConsoleManager(170, 60);
             productMatching = new ProductMatching(Storage);
 
-            //productMatching.Start();
-
             Sites.Register(); // Gets all Site Providers
             Sites.GetSites().ForEach((site) => {Display.Attach(site);}); // Setup display for sites
 
-            /*var hotelsList = Sites.GetAllData(); // Returns a list of hotels from the providers after they've ran
-
-            foreach (List<Hotel> hotels in hotelsList)
-            {
-                hotels.ForEach((hotel) => {Storage.AddHotel(hotel);}); // TODO: Run hotel data through a product matching class, work out if we  already store that hotel first then assign it an ID and store it
-            }
-            
-            Sites.FlushData();*/
-
-           
-
+            //productMatching.Start();
             //Creator creator = new Creator("Report");
 
         }
@@ -85,7 +73,7 @@ namespace Crawler
 
             foreach (List<Hotel> hotels in hotelsList)
             {
-                hotels.ForEach((hotel) => {Storage.AddHotel(hotel);}); // TODO: Run hotel data through a product matching class, work out if we  already store that hotel first then assign it an ID and store it
+                hotels.ForEach((hotel) => {Storage.AddHotel(hotel);});
             }
 
             Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] All Sites have finished!");
