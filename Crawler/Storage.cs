@@ -83,6 +83,7 @@ namespace Crawler
         public List<Hotel> GetHotels()
         {
             List<Hotel> hotels = new List<Hotel>();
+            connection.Open();
             using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM `hotels`", connection))
             {
                 using (SQLiteDataReader reader = command.ExecuteReader())
@@ -134,7 +135,7 @@ namespace Crawler
                     }
                 }
             }
-
+            connection.Close();
             return hotels;
         }
 
