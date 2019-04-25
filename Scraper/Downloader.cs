@@ -19,7 +19,7 @@ namespace Scraper
         public Downloader()
         {
             ChromeOptions options = new ChromeOptions();
-            //options.AddArgument("headless");
+            options.AddArgument("headless");
             options.AddArgument("--log-level=3");
             options.AddArgument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3112.50 Safari/537.36");
 
