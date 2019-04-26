@@ -106,9 +106,14 @@ namespace Crawler.Sites
             param["ss"] = args.City;
             param["rows"] = "50";
             param["order"] = "distance_from_search";
+            param["percent_htype_hotel"] = "1";
+            param["shw_aparth"] = "0";
+            param["nflt"] = "ht_id%3D204%3B";
+            //param["rsf"] = "";
+            //param["update_av"] = "1";
 
-
-            for (int i = 0; i < 50 * 5; i = i + 50)
+            int pages = 7;
+            for (int i = 0; i < 50 * pages; i = i + 50)
             {
                 uriBuilder.Path = "searchresults.en-gb.html";
                 param["offset"] = i.ToString();
@@ -133,7 +138,7 @@ namespace Crawler.Sites
                 layout.AddNode(new NodeRequest
                 {
                     Property = "Address",
-                    XPath = "//div[1]/div[1]/h3/a",
+                    XPath = "//div[1]/div[1]/a",
                     Attribute = "href",
                     Recursive = true,
                     RecursiveXPath = "//*[@id='showMap2']/span[2]",
@@ -148,7 +153,8 @@ namespace Crawler.Sites
                 layout.AddNode(new NodeRequest
                 {
                     Property = "PriceL",
-                    XPath = "//div[2]/div/div/div[1]/div/div[2]/div/strong/b"
+                    XPath = "//div[contains(concat(' ',normalize-space(@class),' '),' roomPrice ')]"
+                    //      '//div[2]/div/div/div[1]/div/div[2]/div[2]/strong/b'
                 });
 
                 layout.AddNode(new NodeRequest
