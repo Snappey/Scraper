@@ -73,6 +73,7 @@ namespace Crawler
 
         public void CommandInput(string text)
         {
+            if (text == null) { return; }
             var splitText = text.Split(' ');
             string command = splitText[0];
             CommandArguments arguments = new CommandArguments();
