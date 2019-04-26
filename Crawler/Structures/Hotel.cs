@@ -9,7 +9,7 @@ using Scraper.Structures;
 
 namespace Crawler.Structures
 {
-    class Hotel
+    public class Hotel
     {
         public string Name;
         public string City;
@@ -37,43 +37,6 @@ namespace Crawler.Structures
         public static List<Hotel> Map(Dictionary<string, List<List<NodeResult>>> nodeResults, RequestArgs args)
         {
             List<Dictionary<string, string>> mappingList = new List<Dictionary<string, string>>();
-
-            /*foreach(List<List<NodeResult>> nodes in nodeResults.Values)
-            {
-                foreach (List<NodeResult> nodeList in nodes)
-                {
-
-                    foreach (NodeResult node in nodeList)
-                    {
-                       
-                        /*if (mappingList.Count <= i) { mappingList.Add(new Dictionary<string, string>()); }
-
-                        
-
-                        HtmlNode first = new HtmlNode(HtmlNodeType.Element, new HtmlDocument(), 0);
-                        first.SetAttributeValue("text", "");
-                        foreach (HtmlNode htmlNode in node[i].Nodes)
-                        {
-                            first = htmlNode;
-                            break;
-                        }
-
-                        Console.WriteLine($"idx: {i}; text: {first.InnerText}; key: {node.Key}");
-                        if (res.Attribute != null && first.Attributes[res.Attribute] != null)
-                        {
-                            mappingList[i].Add(node.Key, first.Attributes[res.Attribute].Value);
-                        }
-                        else
-                        {
-                            mappingList[i].Add(node.Key, first.InnerText);
-                        }
-
-                      
-                    }
-                }
-
-            }*/
-
             List<Hotel> hotels = new List<Hotel>();
             List<FieldInfo> fields = typeof(Hotel).GetFields().ToList();
             Dictionary<string, FieldInfo> fieldNames = new Dictionary<string, FieldInfo>();

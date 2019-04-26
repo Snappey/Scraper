@@ -35,7 +35,7 @@ namespace Crawler.Sites
             return hotels;
         }
 
-        private List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
+        public List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
         {
             List<Hotel> newHotels = new List<Hotel>();
 
@@ -44,6 +44,22 @@ namespace Crawler.Sites
                 hotel.ScrapeURL = Site.URL.Host;
                 hotel.AmtPeople = args.People;
                 hotel.AmtRooms = args.Rooms;
+
+
+                foreach (HotelReservation reservation in hotel.ReservationData.GetAllReservations())
+                {
+                    try // e.g. Inputs 92 / 20 May 2020
+                    {
+                        Convert.ToInt32(reservation.Price);
+
+                        reservation.Price = "£" + reservation.Price;
+                    }
+                    catch
+                    {
+                        // This catches the dates so we can ignore them
+                    }
+                }
+
 
                 newHotels.Add(hotel);
             }

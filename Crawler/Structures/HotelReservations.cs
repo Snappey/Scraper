@@ -9,7 +9,7 @@ namespace Crawler.Structures
     /// <summary>
     /// Stores Checkin/Out Dates vs Price for a given Hotel, stored on the Hotel.cs DataStructure
     /// </summary>
-    class HotelReservations
+    public class HotelReservations
     {
         private List<HotelReservation> reservations = new List<HotelReservation>();
 
@@ -35,12 +35,6 @@ namespace Crawler.Structures
 
         public bool AddDate(HotelReservation reservation)
         {
-            int idx = this.Contains(reservation.CheckIn, reservation.CheckOut);
-            if (idx >= 0)
-            {
-                reservations.RemoveAt(idx);
-            }
-
             reservations.Add(reservation);
             return true;
         }
@@ -117,11 +111,12 @@ namespace Crawler.Structures
         }
     }
 
-    class HotelReservation
+    public class HotelReservation
     {
         public DateTime CheckIn;
         public DateTime CheckOut;
         public string Price;
         public string Currency;
+        public string Site;
     }
 }

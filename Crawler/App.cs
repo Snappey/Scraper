@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Crawler.Report;
 using Crawler.Structures;
 using Scraper;
@@ -20,18 +23,14 @@ namespace Crawler
 
         public App()
         {
+            Display = new ConsoleManager(170, 60);
             Commands = new CommandManager();
             Sites = new SiteManager();
             Storage = new Storage("local.db");
-            Display = new ConsoleManager(170, 60);
             productMatching = new ProductMatching(Storage);
 
-            Sites.Register(); // Gets all Site Providers
+            Sites.Register(); // Gets all Site Providers // TODO: Booking.com Price property is not working properly
             Sites.GetSites().ForEach((site) => {Display.Attach(site);}); // Setup display for sites
-
-            //productMatching.Start();
-            //Creator creator = new Creator("Report");
-
         }
 
         public void Start()
@@ -83,6 +82,32 @@ namespace Crawler
         public List<Site> GetSites()
         {
             return Sites.GetSites();
+        }
+
+        public void GenerateReport(RequestArgs args)
+        {
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] Creating report..");
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] Gathering data, querying database..");
+            productMatching.Start(args);
+
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] Results gathered, report being created");
+
+            Creator reportCreator = new Creator();
+            Task<string> reportLocation = reportCreator.Create(args, productMatching.GetResult());
+
+            while (reportLocation.IsCompleted == false)
+            {
+                Thread.Sleep(10);
+            }
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] [CMD] Report created opening.. (${reportLocation.Result})");
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@reportLocation.Result)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+
         }
 
         private void Loop()

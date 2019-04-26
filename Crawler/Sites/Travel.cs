@@ -64,5 +64,10 @@ namespace Crawler.Sites
                 throw new Exception("Site was not initialised in class with a valid url");
             }
         }
+
+        public List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

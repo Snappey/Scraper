@@ -10,5 +10,6 @@ namespace Crawler.Interfaces
     {
         Scraper.Scraper Scraper { get; set; }
         void RegisterPages(RequestArgs args=null);
+        List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args);
     }
 }

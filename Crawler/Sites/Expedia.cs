@@ -39,7 +39,7 @@ namespace Crawler.Sites
             return hotels;
         }
 
-        private List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
+        public List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
         {
             List<Hotel> newHotels = new List<Hotel>();
 

@@ -26,8 +26,8 @@ namespace Crawler.Commands
 
                 foreach (var page in site.Pages)
                 {
-                    Program.App.Log("  > " + page.Value.URL);
-                    Program.App.Log("   > " + page.Value.Nodes.Count + " nodes");
+                    Program.App.Log("  > " + page.Value.URL.PathAndQuery);
+                    Program.App.Log("  | > " + page.Value.Nodes.Count + " nodes");
                 }
             }
         }

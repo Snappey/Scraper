@@ -38,7 +38,7 @@ namespace Crawler.Sites
             return hotels;
         }
 
-        private List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
+        public List<Hotel> PostProcess(List<Hotel> hotels, RequestArgs args)
         {
             List<Hotel> newHotels = new List<Hotel>();
 
@@ -47,6 +47,8 @@ namespace Crawler.Sites
                 hotel.ScrapeURL = Site.URL.Host;
                 hotel.AmtPeople = args.People;
                 hotel.AmtRooms = args.Rooms;
+
+                hotel.HotelURL = hotel.ScrapeURL + hotel.HotelURL;
 
                 newHotels.Add(hotel);
             }
@@ -140,6 +142,11 @@ namespace Crawler.Sites
             });
 
             Scraper.AddSite(Site);
+        }
+
+        public void PostProcess(List<Hotel> hotels)
+        {
+            throw new NotImplementedException();
         }
     }
 }
