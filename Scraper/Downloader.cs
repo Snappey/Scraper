@@ -102,16 +102,19 @@ namespace Scraper
                 var nodes = document.DocumentNode.SelectNodes(xpathfilter);
                 List<RawPage> pages = new List<RawPage>();
 
-                foreach (HtmlNode node in nodes)
+                if (nodes != null)
                 {
-                    pages.Add(new RawPage
+                    foreach (HtmlNode node in nodes)
                     {
-                        Content = node.InnerHtml,
-                        Time = DateTime.Now,
-                        URL = uri,
-                    });
+                        pages.Add(new RawPage
+                        {
+                            Content = node.InnerHtml,
+                            Time = DateTime.Now,
+                            URL = uri,
+                        });
+                    }
                 }
-                
+             
                 result.Results = pages;
             }
 
@@ -120,17 +123,29 @@ namespace Scraper
 
         public RawPage DownloadPage(Uri url)
         {
-            chrome.Navigate().GoToUrl(url.AbsoluteUri);
-
-            new WebDriverWait(chrome, TimeSpan.FromSeconds(10)).Until( // Wait till page is fully loaded
-                d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
-
-            return new RawPage
+            try
             {
-                Content = chrome.PageSource,
-                Time = DateTime.Now,
-                URL = url,
-            };
+                chrome.Navigate().GoToUrl(url.AbsoluteUri);
+
+                new WebDriverWait(chrome, TimeSpan.FromSeconds(10)).Until( // Wait till page is fully loaded
+                    d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
+
+                return new RawPage
+                {
+                    Content = chrome.PageSource,
+                    Time = DateTime.Now,
+                    URL = url,
+                };
+            }
+            catch
+            {
+                return new RawPage
+                {
+                    Content = "",
+                    Time = DateTime.Now,
+                    URL = url,
+                };
+            }
         }
     }
 }
