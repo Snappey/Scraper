@@ -61,7 +61,8 @@ namespace Crawler
                         new SQLiteParameter("checkout", hotelReservation.CheckOut.ToShortDateString()),
                         new SQLiteParameter("price", hotelReservation.Price),
                         new SQLiteParameter("currency", hotelReservation.Currency), 
-                         
+                        new SQLiteParameter("rooms", hotel.AmtRooms),
+                        new SQLiteParameter("people", hotel.AmtPeople), 
                     };
                     command.Parameters.AddRange(parameters);
 
@@ -103,6 +104,8 @@ namespace Crawler
                             hotel.Extras = reader["extras"] != null ? Convert.ToString(reader["extras"]) : String.Empty;
                             hotel.ScrapeURL = reader["search_url"] != null ? Convert.ToString(reader["search_url"]) : String.Empty;
                             hotel.HotelURL = reader["hotel_url"] != null ? Convert.ToString(reader["hotel_url"]) : String.Empty;
+                            hotel.AmtPeople = reader["people"] != null ? Convert.ToString(reader["people"]) : String.Empty;
+                            hotel.AmtRooms = reader["rooms"] != null ? Convert.ToString(reader["rooms"]) : String.Empty;
 
                             if (hotel.ScrapeURL != null)
                             {
@@ -183,7 +186,7 @@ namespace Crawler
                 price TEXT,
                 currency TEXT,
                 rooms TEXT,
-                people TEXT,
+                people TEXT
             )".Replace("{tbl}", reservationTable);
 
             new SQLiteCommand(reservationtable, connection).ExecuteNonQuery();
