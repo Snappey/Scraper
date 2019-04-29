@@ -36,7 +36,6 @@ namespace Crawler.Structures
         /// </param>
         public static List<Hotel> Map(Dictionary<string, List<List<NodeResult>>> nodeResults, RequestArgs args)
         {
-            List<Dictionary<string, string>> mappingList = new List<Dictionary<string, string>>();
             List<Hotel> hotels = new List<Hotel>();
             List<FieldInfo> fields = typeof(Hotel).GetFields().ToList();
             Dictionary<string, FieldInfo> fieldNames = new Dictionary<string, FieldInfo>();
