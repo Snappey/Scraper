@@ -48,7 +48,10 @@ namespace Crawler.Sites
                 hotel.AmtPeople = args.People;
                 hotel.AmtRooms = args.Rooms;
 
-                hotel.HotelURL = hotel.ScrapeURL + hotel.HotelURL;
+                if (hotel.HotelURL != null)
+                {
+                    hotel.HotelURL = hotel.ScrapeURL + hotel.HotelURL;
+                }            
 
                 newHotels.Add(hotel);
             }
