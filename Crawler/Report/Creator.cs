@@ -12,6 +12,9 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace Crawler.Report
 {
+    /// <summary>
+    /// Creator class, primarly used for generating the HTML reports
+    /// </summary>
     class Creator
     {
         private string name;
@@ -21,9 +24,9 @@ namespace Crawler.Report
             var engine = new RazorLightEngineBuilder()
                 .UseMemoryCachingProvider()
                 .UseFilesystemProject(Environment.CurrentDirectory + "/Report/Templates/")
-                .Build();
+                .Build(); // Creates the razor engine used for generation
 
-            ReportViewModel model = new ReportViewModel
+            ReportViewModel model = new ReportViewModel // Initialise the view model with our supplied data for the template
             {
                 SearchLocation = args.City,
                 CheckIn = args.CheckIn.ToShortDateString(),
@@ -34,7 +37,7 @@ namespace Crawler.Report
                 Hotels = hotels
             };
 
-            string result = await engine.CompileRenderAsync("Template.cshtml", model);
+            string result = await engine.CompileRenderAsync("Template.cshtml", model); // Generate the HTMl with the template and viewmodel
 
             Directory.CreateDirectory(Environment.CurrentDirectory + "/Reports/");
 
