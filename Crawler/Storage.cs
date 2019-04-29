@@ -162,7 +162,7 @@ namespace Crawler
                             hotel.Extras = reader["extras"] != null ? Convert.ToString(reader["extras"]) : String.Empty;
                             hotel.ScrapeURL = reader["search_url"] != null ? Convert.ToString(reader["search_url"]) : String.Empty;
                             hotel.HotelURL = reader["hotel_url"] != null ? Convert.ToString(reader["hotel_url"]) : String.Empty;
-                          //  hotel.DateGathered = Convert.ToDateTime(reader["gathered"]);
+                            hotel.DateGathered = Convert.ToDateTime(reader["gathered"]);
                             hotel.ReservationData = new HotelReservations();
 
                             if (hotel.ScrapeURL != null)
