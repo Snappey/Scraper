@@ -73,6 +73,8 @@ namespace Crawler.Structures
                         }
                     }
 
+                    Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] {hotel.ScrapeURL}: Found, {hotel.Name}, {hotel.Address}");
+
                     reservation.Price = ParseProperty<string>("PriceL", rawHotel);
                     reservation.Currency = ParseProperty<string>("Currency", rawHotel);
                     reservation.CheckIn = args.CheckIn;
