@@ -94,6 +94,7 @@ namespace Crawler
 
             Creator reportCreator = new Creator();
             Task<string> reportLocation = reportCreator.Create(args, productMatching.GetResult());
+            productMatching.Reset();          
 
             while (reportLocation.IsCompleted == false)
             {
@@ -108,6 +109,33 @@ namespace Crawler
             };
             p.Start();
 
+        }
+
+        public void DropDatabase()
+        {
+            Storage.Clear();
+        }
+
+        public void StatsDatabase()
+        {
+            Storage.GetStats();
+        }
+
+        public void ClearDatabase(Uri site)
+        {
+            Storage.Clear(site);
+        }
+
+        public void QueryDatabase(RequestArgs args, string site)
+        {
+            var hotels = Storage.GetHotelsFullRequest(args, site);
+
+            Program.App.Log($"Hotels matching City: '{args.City}' Name: '{args.Name}' Site: '{site}'");
+            foreach (Hotel hotel in hotels)
+            {
+                Program.App.Log($" -> {hotel.City} - {hotel.Name}, {hotel.Address} ({hotel.ScrapeURL})");
+            }
+            Program.App.Log($"Found {hotels.Count} matches!");
         }
 
         private void Loop()

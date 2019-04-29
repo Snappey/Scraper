@@ -140,7 +140,84 @@ namespace Crawler
             return hotels;
         }
 
-        public List<Hotel> GetHotels(RequestArgs args)
+        public List<Hotel> GetHotelsByName(RequestArgs args)
+        {
+            List<Hotel> hotels = new List<Hotel>();
+            connection.Open();
+            using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM `hotels` WHERE name LIKE '%{args.Name}%'", connection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            Hotel hotel = new Hotel();
+
+                            hotel.Name = reader["name"] != null ? Convert.ToString(reader["name"]) : String.Empty;
+                            hotel.Address = reader["address"] != null ? Convert.ToString(reader["address"]) : String.Empty;
+                            hotel.City = reader["city"] != null ? Convert.ToString(reader["city"]) : String.Empty;
+                            hotel.Postcode = reader["postcode"] != null ? Convert.ToString(reader["postcode"]) : String.Empty;
+                            hotel.Phonenumber = reader["phonenumber"] != null ? Convert.ToString(reader["phonenumber"]) : String.Empty;
+                            hotel.Extras = reader["extras"] != null ? Convert.ToString(reader["extras"]) : String.Empty;
+                            hotel.ScrapeURL = reader["search_url"] != null ? Convert.ToString(reader["search_url"]) : String.Empty;
+                            hotel.HotelURL = reader["hotel_url"] != null ? Convert.ToString(reader["hotel_url"]) : String.Empty;
+                            hotel.DateGathered = Convert.ToDateTime(reader["gathered"]);
+                            hotel.ReservationData = new HotelReservations();
+
+                            if (hotel.ScrapeURL != null)
+                            {
+                                using (SQLiteCommand reserveCommand =
+                                    new SQLiteCommand("", connection))
+                                {
+                                    reserveCommand.CommandText = "SELECT * FROM `hotels_reservations` WHERE search_url=@site AND city=@city AND name=@name AND rooms=@rooms AND people=@people";
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("site", hotel.ScrapeURL));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("city", hotel.City));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("name", hotel.Name));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("rooms", args.Rooms));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("people", args.People));
+
+                                    using (SQLiteDataReader reserveReader = reserveCommand.ExecuteReader())
+                                    {
+                                        if (reserveReader.HasRows)
+                                        {
+                                            while (reserveReader.Read())
+                                            {
+                                                HotelReservation reservation = new HotelReservation();
+
+                                                reservation.CheckOut = Convert.ToDateTime(reserveReader["check_out"]);
+                                                reservation.CheckIn = Convert.ToDateTime(reserveReader["check_in"]);
+                                                reservation.Price = reserveReader["price"] != null ? Convert.ToString(reserveReader["price"]) : String.Empty;
+                                                reservation.Currency = reserveReader["currency"] != null ? Convert.ToString(reserveReader["currency"]) : String.Empty;
+                                                reservation.Site = reserveReader["search_url"] != null ? Convert.ToString(reserveReader["search_url"]) : String.Empty;
+
+                                                hotel.AmtPeople = reserveReader["people"] != null ? Convert.ToString(reserveReader["people"]) : String.Empty;
+                                                hotel.AmtRooms = reserveReader["rooms"] != null ? Convert.ToString(reserveReader["rooms"]) : String.Empty;
+
+                                                if (reservation.CheckIn.ToShortDateString() ==
+                                                    args.CheckIn.ToShortDateString())
+                                                {
+                                                    if (reservation.CheckOut.ToShortDateString() ==
+                                                        args.CheckOut.ToShortDateString())
+                                                    {
+                                                        hotel.ReservationData.AddDate(reservation);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            hotels.Add(hotel);
+                        }
+                    }
+                }
+            }
+            connection.Close();
+            return hotels;
+        }
+
+        public List<Hotel> GetHotelsByCity(RequestArgs args)
         {
             List<Hotel> hotels = new List<Hotel>();
             connection.Open();
@@ -215,6 +292,131 @@ namespace Crawler
             }
             connection.Close();
             return hotels;
+        }
+
+        public List<Hotel> GetHotelsFullRequest(RequestArgs args, string site)
+        {
+            List<Hotel> hotels = new List<Hotel>();
+            connection.Open();
+            using (SQLiteCommand command = new SQLiteCommand($"SELECT * FROM `hotels` WHERE name LIKE '%{args.Name}%' AND city LIKE '%{args.City}%' AND search_url LIKE '%{site}%'", connection))
+            {
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            Hotel hotel = new Hotel();
+
+                            hotel.Name = reader["name"] != null ? Convert.ToString(reader["name"]) : String.Empty;
+                            hotel.Address = reader["address"] != null ? Convert.ToString(reader["address"]) : String.Empty;
+                            hotel.City = reader["city"] != null ? Convert.ToString(reader["city"]) : String.Empty;
+                            hotel.Postcode = reader["postcode"] != null ? Convert.ToString(reader["postcode"]) : String.Empty;
+                            hotel.Phonenumber = reader["phonenumber"] != null ? Convert.ToString(reader["phonenumber"]) : String.Empty;
+                            hotel.Extras = reader["extras"] != null ? Convert.ToString(reader["extras"]) : String.Empty;
+                            hotel.ScrapeURL = reader["search_url"] != null ? Convert.ToString(reader["search_url"]) : String.Empty;
+                            hotel.HotelURL = reader["hotel_url"] != null ? Convert.ToString(reader["hotel_url"]) : String.Empty;
+                            hotel.DateGathered = Convert.ToDateTime(reader["gathered"]);
+                            hotel.ReservationData = new HotelReservations();
+
+                            if (hotel.ScrapeURL != null)
+                            {
+                                using (SQLiteCommand reserveCommand =
+                                    new SQLiteCommand("", connection))
+                                {
+                                    reserveCommand.CommandText = "SELECT * FROM `hotels_reservations` WHERE search_url=@site AND city=@city AND name=@name AND rooms=@rooms AND people=@people";
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("site", hotel.ScrapeURL));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("city", hotel.City));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("name", hotel.Name));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("rooms", args.Rooms));
+                                    reserveCommand.Parameters.Add(new SQLiteParameter("people", args.People));
+
+                                    using (SQLiteDataReader reserveReader = reserveCommand.ExecuteReader())
+                                    {
+                                        if (reserveReader.HasRows)
+                                        {
+                                            while (reserveReader.Read())
+                                            {
+                                                HotelReservation reservation = new HotelReservation();
+
+                                                reservation.CheckOut = Convert.ToDateTime(reserveReader["check_out"]);
+                                                reservation.CheckIn = Convert.ToDateTime(reserveReader["check_in"]);
+                                                reservation.Price = reserveReader["price"] != null ? Convert.ToString(reserveReader["price"]) : String.Empty;
+                                                reservation.Currency = reserveReader["currency"] != null ? Convert.ToString(reserveReader["currency"]) : String.Empty;
+                                                reservation.Site = reserveReader["search_url"] != null ? Convert.ToString(reserveReader["search_url"]) : String.Empty;
+
+                                                hotel.AmtPeople = reserveReader["people"] != null ? Convert.ToString(reserveReader["people"]) : String.Empty;
+                                                hotel.AmtRooms = reserveReader["rooms"] != null ? Convert.ToString(reserveReader["rooms"]) : String.Empty;
+
+                                                if (reservation.CheckIn.ToShortDateString() ==
+                                                    args.CheckIn.ToShortDateString())
+                                                {
+                                                    if (reservation.CheckOut.ToShortDateString() ==
+                                                        args.CheckOut.ToShortDateString())
+                                                    {
+                                                        hotel.ReservationData.AddDate(reservation);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            hotels.Add(hotel);
+                        }
+                    }
+                }
+            }
+            connection.Close();
+            return hotels;
+        }
+
+        public void Clear()
+        {
+            connection.Open();
+
+            new SQLiteCommand("DROP TABLE IF EXISTS `hotels`", connection).ExecuteNonQuery();
+            new SQLiteCommand("DROP TABLE IF EXISTS `hotels_reservations`", connection).ExecuteNonQuery();
+
+            connection.Close();
+
+            CreateSchema();
+
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] Tables have been cleared and recreated!");
+
+        }
+
+        public void Clear(Uri site)
+        {
+            connection.Open();
+
+            new SQLiteCommand($"DELETE FROM `hotels` WHERE search_url='{site.Host}'", connection).ExecuteNonQuery();
+            new SQLiteCommand($"DELETE FROM `hotels_reservations` WHERE search_url='{site.Host}'", connection).ExecuteNonQuery();
+
+            connection.Close();
+
+            Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] {site.Host} has been cleared from `hotels` and `hotels_reservations`");
+        }
+
+        public void GetStats()
+        {
+            connection.Open();
+
+            using (SQLiteCommand command = new SQLiteCommand("SELECT COUNT(*) from `hotels`", connection))
+            {
+                Int64 rows = (Int64)command.ExecuteScalar();
+
+                Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] {rows} rows are present inside the `hotels` table");
+            }
+
+            using (SQLiteCommand command = new SQLiteCommand("SELECT COUNT(*) FROM `hotels_reservations`", connection))
+            {
+                Int64 rows = (Int64) command.ExecuteScalar();
+
+                Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] {rows} rows are present inside the `hotels_reservations` table");
+            }
+
+            connection.Close();
         }
 
         private void Init()
