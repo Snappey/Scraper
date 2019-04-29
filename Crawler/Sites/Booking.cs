@@ -152,7 +152,7 @@ namespace Crawler.Sites
                 layout.AddNode(new NodeRequest
                 {
                     Property = "City",
-                    XPath = "//div[1]/div[1]/div/a"
+                    XPath = "//div[1]/div[1]/h3/a/span[1]"
                 });
 
                 layout.AddNode(new NodeRequest
