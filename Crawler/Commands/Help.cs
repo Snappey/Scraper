@@ -6,6 +6,9 @@ using Crawler.Structures;
 
 namespace Crawler.Commands
 {
+    /// <summary>
+    /// Help command, lists all commands loaded into the CommandManager system and information on how they should be used
+    /// </summary>
     [CommandName("help")]
     [CommandDescription("Lists all commands")]
     class Help : Command

@@ -6,6 +6,9 @@ using Crawler.Structures;
 
 namespace Crawler.Commands
 {
+    /// <summary>
+    /// Lists command, lists all sites registed in the scraper that can be ran from application
+    /// </summary>
     [CommandName("list")]
     [CommandDescription("Lists all registered sites")]
     class List : Command

@@ -7,6 +7,9 @@ using Scraper.Structures;
 
 namespace Crawler.Commands
 {
+    /// <summary>
+    /// Run command, initates the scraper to start gathering data from the registered websites
+    /// </summary>
     [CommandName("run")]
     [CommandDescription("Start the data gathering process")]
     [Attributes.CommandArgument("s", "site", "Site to start gathering")]

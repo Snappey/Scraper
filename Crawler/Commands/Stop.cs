@@ -8,6 +8,9 @@ using Crawler.Structures;
 namespace Crawler.Commands
 {
     
+    /// <summary>
+    /// Simply exits the application
+    /// </summary>
     [CommandName("stop")]
     [CommandDescription("Exit the program")]
     class Stop : Command

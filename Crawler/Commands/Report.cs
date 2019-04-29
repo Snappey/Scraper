@@ -6,6 +6,9 @@ using Crawler.Structures;
 
 namespace Crawler.Commands
 {
+    /// <summary>
+    /// Report command, command that allows the user to generate the HTML reports with filters to decide what hotels should be compared
+    /// </summary>
     [CommandName("report")]
     [CommandDescription("Generates an HTML report of hotels with the given arguments")]
     [Attributes.CommandArgument("city", "city", "City to generate the report on")]

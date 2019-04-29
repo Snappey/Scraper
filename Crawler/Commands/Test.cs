@@ -9,6 +9,9 @@ using Scraper.Structures;
 
 namespace Crawler.Commands
 {
+    /// <summary>
+    /// Test command used for debugging
+    /// </summary>
     [CommandName("test")]
     [CommandDescription("Test method for testing")]
     class Test : Command

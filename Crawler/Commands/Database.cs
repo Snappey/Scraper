@@ -6,6 +6,9 @@ using Crawler.Structures;
 
 namespace Crawler.Commands
 {
+    /// <summary>
+    /// Database command, allows for users to interact with the database through the application
+    /// </summary>
     [CommandName("database")]
     [Attributes.CommandArgument("drop", "drop", "clear all the data from the database")]
     [Attributes.CommandArgument("stats", "statistics", "returns statistics from the database")]

@@ -6,6 +6,9 @@ using Crawler.Structures;
 
 namespace Crawler.Commands
 {
+    /// <summary>
+    /// Query command, allows users to query the database and see results in the console
+    /// </summary>
     [CommandName("query")]
     [Attributes.CommandArgument("city", "city", "The city you want to search in")]
     [Attributes.CommandArgument("name", "name", "The name of the hotel you want to search for")]
