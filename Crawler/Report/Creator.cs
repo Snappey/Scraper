@@ -36,7 +36,9 @@ namespace Crawler.Report
 
             string result = await engine.CompileRenderAsync("Template.cshtml", model);
 
-            string filePath = Environment.CurrentDirectory + $"\\{args.City}-{DateTime.Now.Hour}-{DateTime.Now.Minute}-{DateTime.Now.Second}-{DateTime.Now.Day}-{DateTime.Now.Month}-{DateTime.Now.Year}.html";
+            Directory.CreateDirectory(Environment.CurrentDirectory + "/Reports/");
+
+            string filePath = Environment.CurrentDirectory + $"\\Reports\\{args.City}-{DateTime.Now.Hour}-{DateTime.Now.Minute}-{DateTime.Now.Second}-{DateTime.Now.Day}-{DateTime.Now.Month}-{DateTime.Now.Year}.html";
 
             File.WriteAllText(filePath, result);
 
