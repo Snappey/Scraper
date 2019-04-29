@@ -16,18 +16,19 @@ namespace Scraper
 
         public Downloader()
         {
-            ChromeOptions options = new ChromeOptions();
+            ChromeOptions options = new ChromeOptions(); // Setup for the Selenium engine
             options.AddArgument("headless");
             options.AddArgument("--log-level=3");
-            options.AddArgument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3112.50 Safari/537.36");
+            options.AddArgument("--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3112.50 Safari/537.36"); 
+            // Custom user agent allows us to bypass basic checks on certain websites to block web crawlers
 
             ChromeDriverService service = ChromeDriverService.CreateDefaultService(Environment.CurrentDirectory);
-            service.SuppressInitialDiagnosticInformation = true;
+            service.SuppressInitialDiagnosticInformation = true; // Suppress logging information
 
             chrome = new ChromeDriver(service, options); // Chromedriver is copied across from the working directory to the output dir
 
             chrome.Manage().Window.Position = new Point(0, 2000);
-            chrome.Manage().Window.Size = new Size(1920, 1080);
+            chrome.Manage().Window.Size = new Size(1920, 1080); // Sets the browsers size to ensure we have a consistent testing platform for websites that have mobile alternatives
             chrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
@@ -39,8 +40,8 @@ namespace Scraper
 
             try
             {
-                var wait = new WebDriverWait(chrome, TimeSpan.FromSeconds(10));
-                wait.Until(ExpectedConditions.ElementIsVisible(elementid)); // Captcha ID: recaptcha-anchor
+                var wait = new WebDriverWait(chrome, TimeSpan.FromSeconds(10)); 
+                wait.Until(ExpectedConditions.ElementIsVisible(elementid)); // Wait untill a defined element is visible before carrying on with execution
             }
             catch(WebDriverTimeoutException)
             {
@@ -52,7 +53,7 @@ namespace Scraper
             {
                 try
                 {
-                    chrome.ExecuteScript(jsexec);
+                    chrome.ExecuteScript(jsexec); // Execute any custom javascript on the page
                 }
                 catch(Exception e)
                 {
@@ -61,7 +62,7 @@ namespace Scraper
                 }
             }
 
-            new WebDriverWait(chrome, TimeSpan.FromSeconds(75)).Until(
+            new WebDriverWait(chrome, TimeSpan.FromSeconds(75)).Until( // Second check ensures that the document has been fully rendered before carrying on
                 d => ((IJavaScriptExecutor)d).ExecuteScript("return document.readyState").Equals("complete"));
 
             Thread.Sleep(pagedelay);
@@ -69,7 +70,7 @@ namespace Scraper
             string content;
             try
             {
-                content = chrome.PageSource;
+                content = chrome.PageSource; // grab the source of the page once it has been fully rendered
             }
             catch
             {
@@ -83,7 +84,7 @@ namespace Scraper
 
             if (xpathfilter == String.Empty)
             {
-                RawPage page = new RawPage
+                RawPage page = new RawPage // Package the contents into the data structure 
                 {
                     Content = content,
                     Time = DateTime.Now,
@@ -96,7 +97,8 @@ namespace Scraper
             {
                 HtmlDocument document = new HtmlDocument();
                 document.LoadHtml(content);
-                var nodes = document.DocumentNode.SelectNodes(xpathfilter);
+                var nodes = document.DocumentNode.SelectNodes(xpathfilter); 
+                // Use of an xpath filter, allows us to narrow down the search scheme for the page processor allowing for more refined data extraction
                 List<RawPage> pages = new List<RawPage>();
 
                 if (nodes != null)
@@ -118,6 +120,9 @@ namespace Scraper
             return result;
         }
 
+        /// <summary>
+        /// Helper function that the page processor uses, allows them to quickly download a basic page and return the source
+        /// </summary>
         public RawPage DownloadPage(Uri url)
         {
             try

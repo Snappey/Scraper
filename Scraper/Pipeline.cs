@@ -26,9 +26,6 @@ namespace Scraper
                 case PipelineOutput.Plaintext:
                     PlaintextHandler(outputNodes, site, page);
                     break;
-                case PipelineOutput.Json:
-                    JsonHandler(outputNodes, site, page);
-                    break;
                 case PipelineOutput.Object:
                     ObjectHandler(outputNodes, site, page);
                     break;
@@ -42,7 +39,7 @@ namespace Scraper
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("| > " + site.URL);
 
-            foreach (NodeResult node in outputNodes)
+            foreach (NodeResult node in outputNodes) // Used for debugging, outputs the structure from the website found using the custom page layouts
             {
                 stringBuilder.AppendLine("|  -> " + node.Property);
 
@@ -55,11 +52,6 @@ namespace Scraper
             WriteFile(site, page.Replace('/','-'), stringBuilder.ToString());
         }
 
-        private void JsonHandler(List<NodeResult> outputNodes, Site site, string page)
-        {
-
-        }
-
         private void ObjectHandler(List<NodeResult> outputNodes, Site site, string page)
         {
             if (Data.ContainsKey(site) == false)
@@ -69,7 +61,7 @@ namespace Scraper
 
             if (Data[site].ContainsKey(page) == false)
             {
-                Data[site].Add(page, new List<List<NodeResult>>());
+                Data[site].Add(page, new List<List<NodeResult>>()); // Store the results into the data structure so it can be accessed later using information the user has available
                 Data[site][page].Add(outputNodes);
             }
             else

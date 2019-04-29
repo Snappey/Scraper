@@ -21,23 +21,15 @@ namespace Scraper
             //site.Log("Processing, " + layouts.Count + " Nodes");
             foreach(NodeRequest request in layouts)
             {
-                var nodes = html.DocumentNode.SelectNodes(request.XPath);
+                var nodes = html.DocumentNode.SelectNodes(request.XPath); // Search for the nodes using the the predefined xpaths
 
-                if (nodes != null)
+                if (nodes != null) 
                 {
-                    /*foreach(HtmlNode node in nodes)
-                    {
-                        if (request.Property == "Name")
-                        {
-                            site.Log($"Found, {node.InnerText} with address");
-                        }
-                    }*/
-
                     NodeResult result = new NodeResult();
                     result.Property = request.Property;
                     result.Nodes = nodes.ToList();
                     result.Site = site;
-                    result.Page = rawPage.URL.AbsolutePath;
+                    result.Page = rawPage.URL.AbsolutePath; // Creates the node result object for storing
 
                     if (request.Attribute != null)
                     {
@@ -45,7 +37,7 @@ namespace Scraper
                     }
 
 
-                    if (request.Recursive && request.Attribute == "href")
+                    if (request.Recursive && request.Attribute == "href") // handles any recursive requests, allowing the page processor to download a page and reprocess it
                     {
                         var node = result.Nodes.FirstOrDefault();
                         if (node?.Attributes[request.Attribute] != null)
@@ -89,7 +81,6 @@ namespace Scraper
                 } 
             }
             site.Log("Finished Processing!");
-            //Console.WriteLine("|" + string.Concat(Enumerable.Repeat("-", Console.BufferWidth - 1)));
             return htmlNodes;
         }
     }

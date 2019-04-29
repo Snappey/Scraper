@@ -33,10 +33,10 @@ namespace Scraper
                 return;
             }
 
-            Queue<RawPage> rawPages = new Queue<RawPage>();
+            Queue<RawPage> rawPages = new Queue<RawPage>(); // Setup for transfer of data between each of the classes
             List<NodeResult> results = new List<NodeResult>();
 
-            site.Status = SiteStatus.Downloading;
+            site.Status = SiteStatus.Downloading; // Set site status
             site.SiteStart = DateTime.Now;
 
             foreach (PageLayout page in site.Pages.Values)
@@ -44,8 +44,9 @@ namespace Scraper
                 site.Log("Downloading " + site.URL + "...", LogType.Downloader);
                 
                 DownloadResult result = downloadManager.Next(new Uri(page.URL + page.Path), page.SearchElement, page.JSExecution, page.XPathFilter, page.PageDelay);
+                // Download each page and store it,
 
-                if (result.Status.HasFlag(DownloadStatus.ErrorOccurred))
+                if (result.Status.HasFlag(DownloadStatus.ErrorOccurred)) // Error checking if any errors occured let the user know and log it
                 {
                     site.Log("Error occurred in " + site.URL, LogType.Downloader);
                 }
@@ -58,7 +59,7 @@ namespace Scraper
 
                 result.Results.ForEach((rawPage) =>
                 {
-                    PageDownloaded.Invoke(rawPage, EventArgs.Empty);
+                    PageDownloaded.Invoke(rawPage, EventArgs.Empty); // Invoke the event for each page downloaded
                     rawPages.Enqueue(rawPage);
                 });
 
@@ -71,16 +72,16 @@ namespace Scraper
             site.Status = SiteStatus.Processing;
             while (rawPages.Count > 0)
             {
-                RawPage rawPage = rawPages.Dequeue();
+                RawPage rawPage = rawPages.Dequeue(); // Loop back over the downloaded pages and process them
 
                 results = pageProcessor.Next(rawPage, site, downloadManager);
                 PageProcessed.Invoke(results, EventArgs.Empty);
 
-                outputPipeline.Output(results, site, rawPage.URL.LocalPath);
+                outputPipeline.Output(results, site, rawPage.URL.LocalPath); // Take the results from page processor and pass them to the pipeline for packaging
             }
 
             site.Status = SiteStatus.Finished;
-            site.SiteFinished = DateTime.Now;
+            site.SiteFinished = DateTime.Now; // Stopwatch for the sites total running time
         }
 
         public void RunAll()
