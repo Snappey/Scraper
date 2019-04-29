@@ -33,6 +33,7 @@ namespace Crawler
             Console.Clear();
             Setup();
 
+            // Thread is used to update the console with new data, without blocking the rest of the application from running
             Thread thread = new Thread(ThreadStart =>
             {
                 while (true)
@@ -42,7 +43,8 @@ namespace Crawler
                 }
             });
 
-            Thread testThread = new Thread(ThreadStart =>
+            // Separate thread used for updaing the title bar.
+            Thread titleThread = new Thread(ThreadStart =>
             {
                 while (true)
                 {
@@ -58,14 +60,17 @@ namespace Crawler
             });
 
             thread.Start();
-            testThread.Start();
+            titleThread.Start(); // Starts the predefined threads
         }
 
+        /// <summary>
+        /// Initialises the console and setups each row to represent a line
+        /// </summary>
         private void Setup()
         {
-            lines = new Line[Console.BufferHeight  - 1];
+            lines = new Line[Console.BufferHeight  - 1]; // array stores each line, where the index represents the row
 
-            for (int i = 0; i < Console.BufferHeight - 1; i++)
+            for (int i = 0; i < Console.BufferHeight - 1; i++) // Each row of the console is iterated over
             {
                 lines[i] = new Line(i);
 
@@ -102,15 +107,18 @@ namespace Crawler
 
             Console.SetCursorPosition(0, defY);
             Console.Write("|>");
-            Console.SetCursorPosition(defX, defY);
+            Console.SetCursorPosition(defX, defY); // Reset the console position back to default
         }
 
+        /// <summary>
+        /// Primary function that redraws the entire screen and updates the contents of each line
+        /// </summary>
         private void Draw()
         {
             // Main Drawing Loop
-            Console.CursorVisible = false;
+            Console.CursorVisible = false; // Prevents the cursor blinking across the screen
             var oldIn = Console.In;
-            Console.SetIn(TextReader.Null);
+            Console.SetIn(TextReader.Null); // Prevent any user input while redrawing
 
             DrawLog();
 
@@ -126,6 +134,9 @@ namespace Crawler
 
         }
 
+        /// <summary>
+        /// Function that takes output data from the log stream and maps them to the available lines
+        /// </summary>
         private void DrawLog()
         {
             var output = outputQueue.ToArray();
@@ -142,6 +153,9 @@ namespace Crawler
             }
         }
 
+        /// <summary>
+        /// Helper function primarily used for reseting the cursor back to default position for input
+        /// </summary>
         public void ResetCursor()
         {
             Console.SetCursorPosition(0, defY);
@@ -165,6 +179,9 @@ namespace Crawler
 
         }
 
+        /// <summary>
+        /// Attaches a given site to an availible line, this line then relays site data
+        /// </summary>
         public void Attach(Site site)
         {
             if (sites.Contains(site) == false)
@@ -182,6 +199,9 @@ namespace Crawler
             }       
         }
 
+        /// <summary>
+        /// Helper function which finds the availible line to attach to
+        /// </summary>
         private void AttachInfo(List<Line> lines, Site site)
         {
             foreach (Line line in lines)
@@ -194,6 +214,9 @@ namespace Crawler
             }
         }
 
+        /// <summary>
+        /// Returns a list of all ines stored in the console of a specifc type.
+        /// </summary>
         private List<Line> GetLines(LineType type)
         {
             List<Line> res = new List<Line>();

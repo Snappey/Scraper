@@ -26,6 +26,9 @@ namespace Crawler.UI
             this.border = "|";
         }
 
+        /// <summary>
+        /// Called whenever the line has its type set
+        /// </summary>
         private void TypeChanged()
         {
             if (type == LineType.Divider)
@@ -38,6 +41,9 @@ namespace Crawler.UI
             }
         }
 
+        /// <summary>
+        /// Updates the line contents to reflect any changes, ensures that the formatting is kept within the limits of the line
+        /// </summary>
         public void Update()
         {
             int x = Console.CursorLeft; // Cache position before update
@@ -46,7 +52,7 @@ namespace Crawler.UI
 
             Console.SetCursorPosition(0, row); // Change to position of line
 
-            if (type == LineType.Output)
+            if (type == LineType.Output) // used for formatting the console output
             {
                 if (text.Length >= maxW)
                 {
@@ -56,11 +62,11 @@ namespace Crawler.UI
                 {
                     string spacing = string.Concat(Enumerable.Repeat(" ", maxW - text.Length - (border.Length * 2)));
                     Console.Write(border + text + spacing + border);
-                }
+                } // Ensure that line doesnt exceed the console width buffer
             }
             else
             {
-                if (type == LineType.Information)
+                if (type == LineType.Information) // Used for formating the site section of the console
                 {
                     if (Site != null)
                     {
@@ -82,8 +88,8 @@ namespace Crawler.UI
                         }
 
 
-                        var oldColour = Console.ForegroundColor;
-                        if (Site.Status == SiteStatus.Finished)
+                        var oldColour = Console.ForegroundColor; // Cache original colour so we can restore it later
+                        if (Site.Status == SiteStatus.Finished) // Set finished sites a different colour to make them stand out
                         {
                             Console.ForegroundColor = ConsoleColor.Green;
                         }
@@ -97,7 +103,7 @@ namespace Crawler.UI
                         {
                             string spacing = string.Concat(Enumerable.Repeat(" ", maxW - content.Length - (border.Length * 2)));
                             Console.Write(border + content + spacing + border);
-                        }
+                        } // Ensure that line doesnt exceed the console width buffer
 
                         Console.ForegroundColor = oldColour;
 
@@ -121,11 +127,17 @@ namespace Crawler.UI
             Console.SetCursorPosition(x,y); // Restore position back to original
         }
 
+        /// <summary>
+        /// Sets text the content of the line
+        /// </summary>
         public void SetText(string text)
         {
             this.text = text;
         }
 
+        /// <summary>
+        /// Determines the type of data to be displayed on the line
+        /// </summary>
         public void SetLineType(LineType type)
         {
             this.type = type;
@@ -138,6 +150,9 @@ namespace Crawler.UI
         }
     }
 
+    /// <summary>
+    /// Type of lines that can be used for display, determines how they're formatted
+    /// </summary>
     enum LineType
     {
         Output,
