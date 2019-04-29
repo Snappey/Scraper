@@ -13,13 +13,15 @@ namespace Crawler.Structures
     {
         private List<HotelReservation> reservations = new List<HotelReservation>();
 
+        /// <summary>
+        /// Adds a new reservation entry to data structure
+        /// </summary>
         public bool AddDate(DateTime checkIn, DateTime checkOut, string price, string currency)
         {
             int idx = this.Contains(checkIn, checkOut);
             if (idx >= 0)
             {
                 // Found a duplicate reservation entry
-                // TODO: Consider whether keeping duplicate reservations
                 reservations.RemoveAt(idx);
             }
 
@@ -39,6 +41,10 @@ namespace Crawler.Structures
             return true;
         }
 
+        /// <summary>
+        /// Custom contains implementation, checks the data structure to see if any matching checkins are found.
+        /// </summary>
+
         public int Contains(DateTime checkIn, DateTime checkOut)
         {
             int idx = -1;
@@ -55,7 +61,9 @@ namespace Crawler.Structures
             return idx;
         }
 
-        // Can be either CheckIn or CheckOut
+        /// <summary>
+        /// Methods for retrieving individual reservations from the data structure
+        /// </summary>
         public HotelReservation GetReservation(DateTime checkDateTime)
         {
             HotelReservation searchReservation = null;
@@ -111,6 +119,9 @@ namespace Crawler.Structures
         }
     }
 
+    /// <summary>
+    /// Class used internally to store each reservation
+    /// </summary>
     public class HotelReservation
     {
         public DateTime CheckIn;

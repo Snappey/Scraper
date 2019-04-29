@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Crawler.Structures
 {
+    /// <summary>
+    /// Primarly used as filter arguments and storing user input for requesting and filtering data
+    /// </summary>
     public class RequestArgs
     {
         public DateTime CheckIn;

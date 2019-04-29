@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Crawler.Structures
 {
+    /// <summary>
+    /// Simple data structure representing the arguments that can be provided to a command
+    /// </summary>
     class CommandArgument
     {
         public string Prefix;

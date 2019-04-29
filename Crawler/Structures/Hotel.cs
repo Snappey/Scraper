@@ -9,6 +9,9 @@ using Scraper.Structures;
 
 namespace Crawler.Structures
 {
+    /// <summary>
+    /// Main data structure used for storing structured data gathered from various websites
+    /// </summary>
     public class Hotel
     {
         public string Name;
@@ -52,11 +55,11 @@ namespace Crawler.Structures
 
                     foreach (NodeResult result in rawHotel)
                     {
-                        if (fieldNames.ContainsKey(result.Property))
+                        if (fieldNames.ContainsKey(result.Property)) // Map each results property to the classes field
                         {
                             if (result.Attribute != null)
                             {
-                                var node = result.Nodes.FirstOrDefault();
+                                var node = result.Nodes.FirstOrDefault(); // maps attributes for example href to field values
                                 if (node?.Attributes[result.Attribute] != null)
                                 {
                                     fieldNames[result.Property].SetValue(hotel, node.Attributes[result.Attribute].Value);
@@ -78,19 +81,19 @@ namespace Crawler.Structures
                     reservation.Price = ParseProperty<string>("PriceL", rawHotel);
                     reservation.Currency = ParseProperty<string>("Currency", rawHotel);
                     reservation.CheckIn = args.CheckIn;
-                    reservation.CheckOut = args.CheckOut;
+                    reservation.CheckOut = args.CheckOut; // Reservation initialisation and data passing
 
                     hotel.ReservationData.AddDate(reservation);
                     hotel.DateGathered = DateTime.Now;
                     hotels.Add(hotel);
-
-                    //rawHotel.Clear();
                 }
             }
-
             return hotels;
         }
 
+        /// <summary>
+        /// Generic function that allows for a property to be converted into any specifc type
+        /// </summary>
         private static T ParseProperty<T>(string key,  List<NodeResult> nodes)
         {
             foreach (NodeResult node in nodes)
