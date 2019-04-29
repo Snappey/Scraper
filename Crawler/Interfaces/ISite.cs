@@ -6,6 +6,9 @@ using Scraper.Structures;
 
 namespace Crawler.Interfaces
 {
+    /// <summary>
+    /// Interface which provides the access to getting the resulting data from the given site
+    /// </summary>
     interface ISite
     {
         Site Site { get; set; }

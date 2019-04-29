@@ -6,6 +6,9 @@ using Scraper.Structures;
 
 namespace Crawler.Interfaces
 {
+    /// <summary>
+    /// Interface for Sites, provides the common functions for interacting with the scraper library
+    /// </summary>
     interface IScrapable
     {
         Scraper.Scraper Scraper { get; set; }
