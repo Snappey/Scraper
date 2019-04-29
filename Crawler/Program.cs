@@ -9,6 +9,9 @@ namespace Crawler
     {
         public static App App;
 
+        /// <summary>
+        /// Main Entry point of the application
+        /// </summary>
         static void Main(string[] args)
         {
             App = new App();

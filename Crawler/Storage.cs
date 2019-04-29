@@ -7,6 +7,10 @@ using Crawler.Structures;
 
 namespace Crawler
 {
+    /// <summary>
+    /// Main interface for communicating with the database
+    /// Handles all schema creation, connection management and provides a simple layer of abstraction for retrieving data
+    /// </summary>
     class Storage
     {
         private string database;

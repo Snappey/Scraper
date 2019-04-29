@@ -9,6 +9,9 @@ using Scraper.Structures;
 
 namespace Crawler
 {
+    /// <summary>
+    /// Site manager that implements and manages each of the sites interfaces
+    /// </summary>
     class SiteManager
     {
         private List<ISite> Sites = new List<ISite>();
@@ -19,6 +22,9 @@ namespace Crawler
             scraper = new Scraper.Scraper();
         }
 
+        /// <summary>
+        /// Registers each of the individual implementation of the sites
+        /// </summary>
         public void Register()
         {
             IHG ihg = new IHG(scraper);
@@ -40,6 +46,9 @@ namespace Crawler
             Sites.Add(expedia);
         }
 
+        /// <summary>
+        /// Iterates over each of the sites and calls the RegisterPages function
+        /// </summary>
         private void RegisterScrapingSites()
         {
             foreach (ISite site in Sites)
@@ -49,6 +58,10 @@ namespace Crawler
             }
         }
 
+
+        /// <summary>
+        /// calls the GetData function of a specific site
+        /// </summary>
         public List<Hotel> GetData(ISite site, RequestArgs args)
         {
             foreach (ISite isite in Sites)
@@ -61,6 +74,9 @@ namespace Crawler
             return new List<Hotel>();
         }
 
+        /// <summary>
+        /// Iterates over all the sites and calls the GetData function
+        /// </summary>
         public List<List<Hotel>> GetAllData(RequestArgs args)
         {
             List<List<Hotel>> data = new List<List<Hotel>>();
@@ -71,6 +87,9 @@ namespace Crawler
             return data;
         }
 
+        /// <summary>
+        /// Returns a list of all site objects from each of the registered sites
+        /// </summary>
         public List<Site> GetSites()
         {
             List<Site> res = new List<Site>();
@@ -82,6 +101,9 @@ namespace Crawler
             return res;
         }
 
+        /// <summary>
+        /// Returns a specific site from a URL
+        /// </summary>
         public Site GetSite(Uri url)
         {
             foreach (ISite site in Sites)
@@ -94,6 +116,9 @@ namespace Crawler
             return null;
         }
 
+        /// <summary>
+        /// Returns an interface to a site based on a URL
+        /// </summary>
         public ISite GetSiteInterface(Uri url)
         {
             foreach (ISite site in Sites)

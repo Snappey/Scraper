@@ -8,6 +8,9 @@ using Crawler.Commands;
 
 namespace Crawler
 {
+    /// <summary>
+    /// Manages the implementation and provides an interface to all commands in the system
+    /// </summary>
     class CommandManager
     {
         private Dictionary<string, Command> commands = new Dictionary<string, Command>();
@@ -22,22 +25,25 @@ namespace Crawler
             return commands;
         }
 
+        /// <summary>
+        /// Loads all commands into the manager
+        /// </summary>
         private void LoadCommands()
         {
             // Loop through each of the commands via an attribution
             Type[] types = Assembly.GetExecutingAssembly().GetTypes().Where(t =>
                 String.Equals(t.Namespace, "Crawler.Commands", StringComparison.Ordinal)).ToArray();
 
-            foreach (Type type in types)
+            foreach (Type type in types) // iterate over each of the classes in the Crawler.Commands namespace
             {
                 var clss = (Command)Activator.CreateInstance(type);
-                var list = type.GetCustomAttributesData();
+                var list = type.GetCustomAttributesData(); // Get attributes used for the help command, stores metadata
 
                 for (int i = 0; i < list.Count; i++)
                 {
                     var atrb = list[i];
 
-                    if (atrb.AttributeType.Name == "CommandName")
+                    if (atrb.AttributeType.Name == "CommandName") // If statement with a specifc case for each of the possible attributes
                     {
                         clss.Name = atrb.ConstructorArguments[0].Value.ToString();
                     }
@@ -71,17 +77,21 @@ namespace Crawler
             }
         }
 
+        /// <summary>
+        /// Command parsing, takes a string and attempts to match it to a stored class.
+        /// Also attempts to create a list of arguments that can be passed to matched command
+        /// </summary>
         public void CommandInput(string text)
         {
             if (text == null) { return; }
-            var splitText = text.Split(' ');
+            var splitText = text.Split(' '); // splits the input text up by the space character
             string command = splitText[0];
             CommandArguments arguments = new CommandArguments();
 
-            if (splitText.Length > 1)
+            if (splitText.Length > 1) // if there is more than one index in the array check for arguments
             {
-                string[] flags = new string[splitText.Length];
-                string[] parameters = new string[splitText.Length];
+                string[] flags = new string[splitText.Length]; // each array represents the flags and the associatd parameters
+                string[] parameters = new string[splitText.Length]; // each index is linked across the arrays
 
                 var paramcount = 0;
                 for (int i = 1; i < splitText.Length; i++)
@@ -104,6 +114,7 @@ namespace Crawler
                     }
                 }
 
+                // iterate back over the arrays and store them in the CommandArguments data structure, aligning the arrays so each flag has the correcy parameter
                 for (int i = 0; i < flags.Length; i++)
                 {
                     if (flags[i] == null) { continue; }
@@ -125,6 +136,9 @@ namespace Crawler
             }
         }
 
+        /// <summary>
+        /// Invoke executes the matched commands
+        /// </summary>
         public bool Invoke(string cmd, CommandArguments args)
         {
             if (commands.ContainsKey(cmd.ToLower()))
