@@ -105,47 +105,5 @@ namespace Scraper
         {
             outputPipeline.Data.Clear();
         }
-
-        public List<NodeResult> GetResult(Site site, string page="", string property="")
-        {
-            var data = outputPipeline.Data;
-            List<NodeResult> result = new List<NodeResult>();
-            // TODO: REFACTOR WHOLE METHOD
-
-            /*if (data.ContainsKey(site))
-            {
-                if (page == "")
-                {
-                    foreach (KeyValuePair<string, Dictionary<string, List<NodeResult>>> keyValue in data[site])
-                    {
-                        foreach (List<NodeResult> nodeResult in keyValue.Value.Values)
-                        {
-                            foreach (NodeResult nodeResult1 in nodeResult) result.Add(nodeResult1); //TODO Rename nodeResult1
-                        }
-                    }
-                }
-                else
-                {
-                    if (data[site].ContainsKey(page))
-                    {
-                        if (property == "")
-                        {
-                            foreach (KeyValuePair<string, List<NodeResult>> keyValue in data[site][page])
-                            {
-                                foreach (NodeResult nodeResult in keyValue.Value) result.Add(nodeResult);
-                            }
-                        }
-                        else
-                        {
-                            if (data[site][page].ContainsKey(property))
-                            {
-                                foreach (NodeResult nodeResult in data[site][page][property]) result.Add(nodeResult);
-                            }
-                        }
-                    }
-                }
-            }*/
-            return result;
-        }
     }
 }

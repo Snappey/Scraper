@@ -8,8 +8,6 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
-//using SeleniumExtras.WaitHelpers;
-
 namespace Scraper
 {
     internal class Downloader
@@ -38,8 +36,7 @@ namespace Scraper
             DownloadResult result = new DownloadResult();
 
             chrome.Navigate().GoToUrl(uri.AbsoluteUri);
- 
-            // TODO: This needs refactoring to account for multiple issues, error catching, request polling and source timeout
+
             try
             {
                 var wait = new WebDriverWait(chrome, TimeSpan.FromSeconds(10));

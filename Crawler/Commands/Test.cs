@@ -56,8 +56,6 @@ namespace Crawler.Commands
 
             //Storage storage = new Storage("local.db");
 
-            var res = scraper.GetResult(dotnetperls, "/async");
-
             Console.ReadKey();
         }
     }
