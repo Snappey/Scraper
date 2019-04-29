@@ -11,6 +11,9 @@ using Scraper.Structures;
 
 namespace Crawler.Sites
 {
+    /// <summary>
+    /// Implemenation of www.crowneplaza.com data gatheingr and scraping methods.
+    /// </summary>
     class CrownePlaza : ISite, IScrapable
     {
         public CrownePlaza(Scraper.Scraper Scraper)

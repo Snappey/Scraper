@@ -10,6 +10,9 @@ using Scraper.Structures;
 
 namespace Crawler.Sites
 {
+    /// <summary>
+    /// Implementation of booking.com, describes all methods for gathering data
+    /// </summary>
     class Booking : ISite, IScrapable
     {
         public Booking(Scraper.Scraper Scraper)
@@ -114,8 +117,6 @@ namespace Crawler.Sites
             param["percent_htype_hotel"] = "1";
             param["shw_aparth"] = "0";
             param["nflt"] = "ht_id%3D204%3B";
-            //param["rsf"] = "";
-            //param["update_av"] = "1";
 
             int pages = 7;
             for (int i = 0; i < 50 * pages; i = i + 50)

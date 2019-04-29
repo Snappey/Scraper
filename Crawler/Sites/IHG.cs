@@ -11,25 +11,11 @@ using Scraper.Structures;
 
 namespace Crawler.Sites
 {
+    /// <summary>
+    /// Implementation of ihg.com, describes all methods for gathering data
+    /// </summary>
     class IHG : ISite, IScrapable
     {
-        // https://www.ihg.com/
-        // e.g. query: https://www.ihg.com/hotels/gb/en/find-hotels/hotel/list?qDest=London,%20United%20Kingdom&
-        // qCiMy=32019
-        // qCiD=21
-        // qCoMy=32019
-        // qCoD=22
-        // qAdlt=2
-        // qChld=0
-        // qRms=1
-        // qRtP=6CBARC
-        // qAkamaiCC=GB
-        // qSrt=sDD
-        // qBrs=re.ic.in.vn.cp.vx.hi.ex.rs.cv.sb.cw.ma.ul.ki.va
-        // srb_u=0
-        // qRad=30
-        // qRdU=mi
-
         public IHG(Scraper.Scraper scraper)
         {
             this.Scraper = scraper;
@@ -100,6 +86,24 @@ namespace Crawler.Sites
             if (Site != null)
             {
                 UriBuilder uriBuilder = new UriBuilder(Site.URL);
+
+                // https://www.ihg.com/
+                // e.g. query: https://www.ihg.com/hotels/gb/en/find-hotels/hotel/list?qDest=London,%20United%20Kingdom&
+                // qCiMy=32019
+                // qCiD=21
+                // qCoMy=32019
+                // qCoD=22
+                // qAdlt=2
+                // qChld=0
+                // qRms=1
+                // qRtP=6CBARC
+                // qAkamaiCC=GB
+                // qSrt=sDD
+                // qBrs=re.ic.in.vn.cp.vx.hi.ex.rs.cv.sb.cw.ma.ul.ki.va
+                // srb_u=0
+                // qRad=30
+                // qRdU=mi
+
 
                 var param = HttpUtility.ParseQueryString(String.Empty);
                 param["qRms"] = args.Rooms;

@@ -11,6 +11,9 @@ using Scraper.Structures;
 
 namespace Crawler.Sites
 {
+    /// <summary>
+    /// Implementation of holidayinn.com, describes all methods for gathering data
+    /// </summary>
     class HolidayInn : ISite, IScrapable
     {
 

@@ -10,6 +10,9 @@ using Scraper.Structures;
 
 namespace Crawler.Sites
 {
+    /// <summary>
+    /// Implementation of expedia.com, describes all methods for gathering data
+    /// </summary>
     class Expedia : ISite, IScrapable
     {
 
