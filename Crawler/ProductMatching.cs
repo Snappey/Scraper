@@ -21,9 +21,17 @@ namespace Crawler
 
         public void Start(RequestArgs args)
         {
-            preMatchHotels = connection.GetHotels(args);
-
+            if (args.Name != String.Empty)
+            {
+                preMatchHotels = connection.GetHotelsByName(args);
+            }
+            else
+            {
+                preMatchHotels = connection.GetHotelsByCity(args);
+            }
+            
             Loop();
+            AddSingleHotels();
         }
 
         public List<Hotel> GetResult()
@@ -38,6 +46,17 @@ namespace Crawler
             checkHotel.Clear();
         }
 
+        private void AddSingleHotels()
+        {
+            foreach (KeyValuePair<Hotel, bool> hotelChecked in checkHotel)
+            {
+                if (hotelChecked.Value == false && postMatchHotels.Contains(hotelChecked.Key) == false)
+                {
+                    postMatchHotels.Add(hotelChecked.Key);
+                }
+            }
+        }
+
         private void Loop()
         {
             foreach (Hotel originalHotel in preMatchHotels)
@@ -47,12 +66,26 @@ namespace Crawler
                     if (originalHotel.Equals(compareHotel) || originalHotel.ScrapeURL.Equals(compareHotel.ScrapeURL)) { continue; } // Skip comparing the same hotels
                     double similarity = Compare(originalHotel, compareHotel);
 
-                    if (similarity > .55 )
+                    if (similarity > .6)
                     {
                         if (checkHotel.ContainsKey(originalHotel) == false)
                         {
                             checkHotel.Add(originalHotel, true);
-                            postMatchHotels.Add(Collate(originalHotel, compareHotel));
+                            if (checkHotel.ContainsKey(compareHotel) == false)
+                            {
+                                checkHotel.Add(compareHotel, true);
+
+                                if (postMatchHotels.Contains(originalHotel))
+                                {
+                                    var idx = postMatchHotels.IndexOf(originalHotel);
+                                    Collate(postMatchHotels[idx], compareHotel);
+                                }
+                                else
+                                {
+                                    Collate(originalHotel, compareHotel);
+                                    postMatchHotels.Add(originalHotel);
+                                }
+                            }                        
                         }
                         //Console.WriteLine($" Compare: {compareHotel.ScrapeURL} | Original: {originalHotel.ScrapeURL} | {compareHotel.Name} : {originalHotel.Name} - {similarity}");
                         else
@@ -60,16 +93,13 @@ namespace Crawler
                             Collate(originalHotel, compareHotel);
                         }
                     }
+                }
 
-                    // Determine a threshold that says they are the same hotel
-                    // if val > threshold add both hotels to the list and remove one from the prematch list
+                if (checkHotel.ContainsKey(originalHotel) == false)
+                {
+                    checkHotel.Add(originalHotel, false);
                 }
             }
-            // ISSUE, we only add hotels that are similar to the postMatchHotel list, we are missing all hotels that we only have one entry of or are not similar to other hotels
-            // Possibly always add hotels to the list, if a hotel is similar add the similar one as well and remove that from the list keeping the original still in for further comparisons
-
-            // Once each hotel has been compared against each other and the postMatchHotel list is full
-            // Loop through the postMatchHotels and collate the data from each of the fields to potentially have a more complete dataset
         }
 
         private double Compare(Hotel originalHotel, Hotel compareHotel)
@@ -86,8 +116,7 @@ namespace Crawler
                 }
                 else
                 {
-                    /*var originalHotelNameSplit = originalHotelName.Split(' ');
-                    var compareHotelNameSplit = compareHotelName.Split(' ');
+                    var originalHotelNameSplit = originalHotelName.Split(' ');
                     int matches = 0;
 
                     foreach (string originalComponent in originalHotelNameSplit)
@@ -99,14 +128,11 @@ namespace Crawler
                         }
                     }
 
-                    if (matches > 0)
-                    {
-                        similarity += Math.Max((0.12) * matches, .4); // calculate threshold based on how many components match
-                    }*/
+                    similarity += .5 * (matches / originalHotelNameSplit.Length); // calculate threshold based on how many components match
 
-                    int distance = LevenshteinDistance(originalHotelName, compareHotelName);
+                    //int distance = LevenshteinDistance(originalHotelName, compareHotelName);
 
-                    similarity += (.4 - (0.05 * distance));
+                    //similarity += (.5 - (0.05 * distance));
 
                     //Console.WriteLine($"{originalHotelName} : {compareHotelName} = {distance} ");
                 }
@@ -133,7 +159,22 @@ namespace Crawler
 
                 if (originalAddress == compareAddress)
                 {
-                    similarity += .2;
+                    similarity += .4;
+                }
+                else
+                {
+                    var originalSplit = originalAddress.Split(' ');
+                    int matches = 0;
+
+                    foreach (string component in originalSplit)
+                    {
+                        if (component.Contains(component))
+                        {
+                            matches++;
+                        }
+                    }
+
+                    similarity += .4 * (matches / originalSplit.Length);
                 }
 
                 var originalPostcode = postcodeRegex.Match(originalAddress);
@@ -169,14 +210,14 @@ namespace Crawler
             return similarity;
         }
 
-        private Hotel Collate(Hotel originalHotel, Hotel collateHotel)
+        private void Collate(Hotel originalHotel, Hotel collateHotel)
         {
             foreach (HotelReservation hotelReservation in collateHotel.ReservationData.GetAllReservations())
             {
                 originalHotel.ReservationData.AddDate(hotelReservation);
             }
+
             
-            return originalHotel;
         }
 
         private int LevenshteinDistance(string original, string compare)

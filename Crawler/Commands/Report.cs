@@ -24,6 +24,7 @@ namespace Crawler.Commands
                 City = "",
                 People = "1",
                 Rooms = "1",
+                Name = "",
             };
 
             foreach (var argument in commandArgument.Arguments)
@@ -35,7 +36,15 @@ namespace Crawler.Commands
 
                 if (argument.Key == "-ci")
                 {
-                    args.CheckIn = Convert.ToDateTime(argument.Value);
+                    try
+                    {
+                        args.CheckIn = Convert.ToDateTime(argument.Value);
+                        args.CheckOut = args.CheckIn.AddDays(1);
+                    }
+                    catch
+                    {
+                        Program.App.Log("Failed to convert -ci argument to valid date");
+                    }                
                 }
 
                 if (argument.Key == "-co")
@@ -46,6 +55,11 @@ namespace Crawler.Commands
                 if (argument.Key == "-city")
                 {
                     args.City = argument.Value;
+                }
+
+                if (argument.Key == "-name")
+                {
+                    args.Name = argument.Value;
                 }
 
                 if (argument.Key == "-p")
@@ -59,7 +73,14 @@ namespace Crawler.Commands
                 }
             }
 
-            Program.App.GenerateReport(args);
+            if (args.Name == String.Empty && args.City == String.Empty)
+            {
+                Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] No argument passed for city or name..");
+            }
+            else
+            {
+                Program.App.GenerateReport(args);
+            }       
         }
     }
 }

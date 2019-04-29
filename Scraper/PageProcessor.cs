@@ -18,11 +18,9 @@ namespace Scraper
             List<NodeRequest> layouts = site.Pages[rawPage.URL.PathAndQuery.Remove(0,1)].Nodes;
             List<NodeResult> htmlNodes = new List<NodeResult>();
 
-            site.Log("Processing, " + layouts.Count + " Nodes");
+            //site.Log("Processing, " + layouts.Count + " Nodes");
             foreach(NodeRequest request in layouts)
             {
-                //site.Log(request.Property + " - {XPath: " + request.XPath + "}", LogType.Processing);
-
                 var nodes = html.DocumentNode.SelectNodes(request.XPath);
 
                 if (nodes != null)
@@ -31,7 +29,7 @@ namespace Scraper
                     {
                         if (request.Property == "Name")
                         {
-                            site.Log("Processing, " + node.InnerText);
+                            site.Log($"Found, {node.InnerText} with address");
                         }
                     }*/
 

@@ -153,7 +153,16 @@
                     </ul>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-7">
-                    <h3><a href="@hotel.HotelURL" title="">@hotel.Name</a></h3>
+                    <h3>
+                        @if (hotel.HotelURL.Contains("https://"))
+                        {
+                            <a href="@hotel.HotelURL" title="">@hotel.Name</a>
+                        }
+                        else
+                        {
+                            <a href="@hotel.HotelURL" title="">@hotel.Name</a>
+                        }
+                    </h3>
                     <p>
                         @if (hotel.Extras != String.Empty)
                         {
@@ -167,42 +176,49 @@
                         <br/>
                         <span style="font-size: 10px;float: right;">Gathered on @hotel.DateGathered.ToShortDateString() - @hotel.DateGathered.ToShortTimeString()</span>
                         <ul class="list-group">
-                            @{
-                                HotelReservation cheapestReservation = hotel.ReservationData.GetAllReservations().First();
-                                int cheapestInt = Int32.MaxValue;
-                            }
-                            @foreach (HotelReservation reservation in hotel.ReservationData.GetAllReservations())
-                            {
-                                var match = Regex.Match(reservation.Price, @"\d+");
-                                if (match.Success)
-                                {
-                                    int tempInt = Convert.ToInt32(match.Value);
+                        @if (hotel.ReservationData.GetAllReservations().Count != 0)
+                        {
+                            
+                            HotelReservation cheapestReservation = hotel.ReservationData.GetAllReservations().First();
+                            int cheapestInt = Int32.MaxValue;
+                            
+                            foreach (HotelReservation reservation in hotel.ReservationData.GetAllReservations())
+                             {
+                                 var match = Regex.Match(reservation.Price, @"\d+");
+                                 if (match.Success)
+                                 {
+                                     int tempInt = Convert.ToInt32(match.Value);
 
-                                    if (tempInt < cheapestInt)
-                                    {
-                                        cheapestInt = tempInt;
-                                        cheapestReservation = reservation;
-                                    }
-                                }
-                            }
+                                     if (tempInt < cheapestInt)
+                                     {
+                                         cheapestInt = tempInt;
+                                         cheapestReservation = reservation;
+                                     }
+                                 }
+                             }
 
-                            @foreach (HotelReservation reservation in hotel.ReservationData.GetAllReservations())
-                            {
-                                if (reservation.Equals(cheapestReservation))
-                                {
-                                    <li class="list-group-item list-group-item-info">
-                                        <a class="label-url" href="https://@reservation.Site">@reservation.Site</a>
-                                        <span class="label label-success label-price"> @reservation.Price</span>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="list-group-item">
-                                        <a class ="label-url" href="https://@reservation.Site">@reservation.Site</a>
-                                        <span class="label label-primary label-price"> @reservation.Price</span>
-                                    </li>
-                                }
-                            }
+                            foreach (HotelReservation reservation in hotel.ReservationData.GetAllReservations())
+                             {
+                                 if (reservation.Equals(cheapestReservation))
+                                 {
+                                     <li class="list-group-item list-group-item-info">
+                                         <a class="label-url" href="https://@reservation.Site">@reservation.Site</a>
+                                         <span class="label label-success label-price"> @reservation.Price</span>
+                                     </li>
+                                 }
+                                 else
+                                 {
+                                     <li class="list-group-item">
+                                         <a class="label-url" href="https://@reservation.Site">@reservation.Site</a>
+                                         <span class="label label-primary label-price"> @reservation.Price</span>
+                                     </li>
+                                 }
+                             }
+                        }
+                        else
+                        {
+                            <span> No reservation details.. </span>
+                        }
                         </ul>
                     </p>
                     <!--<span class="plus"><a href="#" title="Lorem ipsum"><i class="glyphicon glyphicon-plus"></i></a></span>-->

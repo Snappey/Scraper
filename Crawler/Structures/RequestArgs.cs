@@ -11,5 +11,6 @@ namespace Crawler.Structures
         public string City;
         public string People;
         public string Rooms;
+        public string Name;
     }
 }
