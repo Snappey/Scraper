@@ -118,7 +118,11 @@ namespace Crawler
                 }
             }
             Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] {text}"); // Echo back into console
-            Invoke(command, arguments);       
+
+            if (Invoke(command, arguments) == false)
+            {
+                Program.App.Log($"[{DateTime.Now.ToShortTimeString()}] No command found '" + command + "'");
+            }
         }
 
         public bool Invoke(string cmd, CommandArguments args)
@@ -129,7 +133,7 @@ namespace Crawler
 
                 cmds.Invoke(args);
 
-               
+                return true;
             }
             return false;
         }
